@@ -93,9 +93,9 @@
         <!-- Shop Product End -->
     </div>
 </div>
-<script src="js/filter.js"></script>
-<%@ include file="footer.jsp" %>
 
+<%@ include file="footer.jsp" %>
+<script src="js/filter.js"></script>
 
 
 

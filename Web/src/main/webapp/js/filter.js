@@ -35,24 +35,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Construct the URL, avoiding appending an empty query string
-        let requestUrl = 'shop';
-        if (params.toString()) {
-            requestUrl += '?' + params.toString();
-        }
+       	const baseUrl = window.location.origin + '/Web';
+		let requestUrl = `${baseUrl}/shop`;
+		if (params.toString()) {
+    		requestUrl += '?' + params.toString();
+		}
 
         // Log the full URL being fetched
         console.log(`Fetching data from: ${requestUrl}`);
 
         // Make AJAX request
         fetch(requestUrl, {
+			method: 'GET', // Ensure you're using the correct method
+			
             headers: {
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-Requested-With': 'XMLHttpRequest',
+                'Cache-Control': 'no-cache'
             }
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
+			console.log(response.status);
             return response.text();
         })
         .then(html => {

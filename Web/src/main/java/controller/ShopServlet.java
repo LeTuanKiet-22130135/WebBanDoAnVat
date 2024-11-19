@@ -78,7 +78,6 @@ public class ShopServlet extends HttpServlet {
 			// Set query parameters and log them for debugging
 			for (int i = 0; i < parameters.size(); i++) {
 				stmt.setObject(i + 1, parameters.get(i));
-				System.out.println("Parameter " + (i + 1) + ": " + parameters.get(i));
 			}
 
 			// Execute query and build product list
@@ -100,13 +99,11 @@ public class ShopServlet extends HttpServlet {
 		// Check if the request is an AJAX request
 		String ajax = req.getHeader("X-Requested-With");
 		if ("XMLHttpRequest".equals(ajax)) {
-			// Set products as a request attribute and forward to product-list.jsp for AJAX responses
-			req.setAttribute("products", products);
-			req.getRequestDispatcher("product-list.jsp").forward(req, resp);
+		    req.setAttribute("products", products);
+		    req.getRequestDispatcher("WEB-INF/fragment/product-list.jsp").forward(req, resp);
 		} else {
-			// Non-AJAX request: Forward to the main shop.jsp
-			req.setAttribute("products", products);
-			req.getRequestDispatcher("shop.jsp").forward(req, resp);
+		    req.setAttribute("products", products);
+		    req.getRequestDispatcher("shop.jsp").forward(req, resp);
 		}
 	}
 
@@ -115,4 +112,6 @@ public class ShopServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		super.doPost(req, resp);
 	}
+	
+	
 }
