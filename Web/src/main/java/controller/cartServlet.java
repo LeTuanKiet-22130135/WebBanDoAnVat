@@ -9,25 +9,20 @@ import java.sql.*;
 import java.util.*;
 import db.*;
 
-@WebServlet("/cartServlet")
+@WebServlet("/cart")
 public class cartServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	public cartServlet() {
-		// TODO Auto-generated constructor stub
-	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Product> products = new ArrayList<>();
 		String query = "SELECT * FROM product";
+		Connection conn = DBConnection.getConnection();
 
 		try (
-				
-				Connection conn = DBConnection.getConnection();
 				PreparedStatement ps = conn.prepareStatement(query);
-				ResultSet rs = ps.executeQuery()
-						) {
+				ResultSet rs = ps.executeQuery();
+		) {
 
 			while (rs.next()) {
 				Product product = new Product();
@@ -35,19 +30,21 @@ public class cartServlet extends HttpServlet {
 				product.setName(rs.getString("name"));
 				product.setDescription(rs.getString("description"));
 				product.setPrice(rs.getBigDecimal("price"));
-				product.setImageUrl(rs.getString("imageUrl"));
-				product.setQuantity(rs.getInt("quantity"));
-				
+				product.setImageUrl(rs.getString("image"));
+				product.setQuantity(rs.getInt("cid"));
+				products.add(product);
 			}
 			
-			 // Đưa dữ liệu vào session
-            HttpSession session = request.getSession();
-            session.setAttribute("products", products);
+			System.out.println(products.size());
 
-            // Chuyển đến trang cart.jsp
-            request.getRequestDispatcher("cart.jsp").forward(request, response);
+			// Đưa dữ liệu vào session
+			HttpSession session = request.getSession();
+			session.setAttribute("products", products);
 
-			
+			// Chuyển đến trang cart.jsp
+			request.getRequestDispatcher("cart.jsp").forward(request, response);
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,7 +54,7 @@ public class cartServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		doPost(request, response);
 	}
 
 }

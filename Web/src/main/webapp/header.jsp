@@ -98,12 +98,12 @@
 					<div class="collapse navbar-collapse justify-content-between"
 						id="navbarCollapse">
 						<div class="navbar-nav mr-auto py-0">
-							<a href="index.jsp" class="nav-item nav-link active">Home</a> 
+							<a href="index" class="nav-item nav-link active">Home</a> 
 							<a
-								href="shop.jsp" class="nav-item nav-link">Shop</a> 
-								<a href="cart.jsp"
+								href="shop" class="nav-item nav-link">Shop</a> 
+								<a href="cart"
 								class="nav-item nav-link">Shopping Cart</a>
-								 <a href="checkout.jsp"
+								 <a href="checkout"
 								class="nav-item nav-link">Checkout</a>
 								 <a href="contact.jsp"
 								class="nav-item nav-link">Contact</a>
