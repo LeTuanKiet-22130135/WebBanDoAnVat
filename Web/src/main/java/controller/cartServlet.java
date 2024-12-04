@@ -18,7 +18,21 @@ public class cartServlet extends HttpServlet {
 		List<Product> products = new ArrayList<>();
 		String query = "SELECT * FROM product";
 		Connection conn = DBConnection.getConnection();
+		
+		HttpSession session = request.getSession(false);
+		
+		// Check if user is logged in
+        if (session == null || session.getAttribute("user") == null) {
+            // Save the current URL for redirection after login
+            String redirectUrl = request.getRequestURL() + "?" + request.getQueryString();
+            session = request.getSession(true);
+            session.setAttribute("redirectAfterLogin", redirectUrl);
 
+            // Redirect to login page
+            response.sendRedirect("login.jsp");
+            return;
+        }
+		
 		try (
 				PreparedStatement ps = conn.prepareStatement(query);
 				ResultSet rs = ps.executeQuery();
@@ -38,7 +52,6 @@ public class cartServlet extends HttpServlet {
 			System.out.println(products.size());
 
 			// Đưa dữ liệu vào session
-			HttpSession session = request.getSession();
 			session.setAttribute("products", products);
 
 			// Chuyển đến trang cart.jsp
