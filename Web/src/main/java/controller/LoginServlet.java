@@ -41,6 +41,7 @@ public class LoginServlet extends HttpServlet {
 	            // Successful login: Set user session
 	            HttpSession session = req.getSession();
 	            session.setAttribute("user", rs.getString("username"));
+	            session.setAttribute("userId", rs.getInt("id"));
 
 	            // Redirect to the originally requested page, or default to index
 	            String redirectUrl = (String) session.getAttribute("redirectAfterLogin");

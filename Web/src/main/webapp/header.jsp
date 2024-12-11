@@ -94,7 +94,6 @@
                         <div class="navbar-nav mr-auto py-0">
                             <a href="index" class="nav-item nav-link active">Home</a>
                             <a href="shop" class="nav-item nav-link">Shop</a>
-                            <a href="cart" class="nav-item nav-link">Shopping Cart</a>
                             <a href="contact.jsp" class="nav-item nav-link">Contact</a>
                         </div>
                         <!-- Account and Cart Section -->
