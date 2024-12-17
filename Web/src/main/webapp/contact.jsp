@@ -55,4 +55,3 @@
     </div>
     <!-- Contact End -->
 <%@ include file="footer.jsp" %>
-<script src="js/filter.js"></script>

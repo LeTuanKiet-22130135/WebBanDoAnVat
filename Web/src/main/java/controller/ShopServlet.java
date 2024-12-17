@@ -89,6 +89,7 @@ public class ShopServlet extends HttpServlet {
 				product.setDescription(rs.getString("description"));
 				product.setPrice(rs.getBigDecimal("price"));
 				product.setImageUrl(rs.getString("image"));
+				product.setQuantity(rs.getInt("quantity"));
 				products.add(product);
 			}
 		} catch (SQLException e) {

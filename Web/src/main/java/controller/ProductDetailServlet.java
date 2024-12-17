@@ -43,6 +43,7 @@ public class ProductDetailServlet extends HttpServlet {
 				product.setDescription(rs.getString("description"));
 				product.setPrice(rs.getBigDecimal("price"));
 				product.setImageUrl(rs.getString("image"));
+				product.setQuantity(rs.getInt("quantity"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

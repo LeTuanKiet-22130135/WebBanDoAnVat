@@ -36,11 +36,14 @@ public class IndexServlet extends HttpServlet {
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getBigDecimal("price"));
                 product.setImageUrl(rs.getString("image"));
+                product.setQuantity(rs.getInt("quantity"));
                 products.add(product);
             }	
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+        
+        
         req.setAttribute("products", products);
         
         RequestDispatcher dispatcher = req.getRequestDispatcher("index.jsp");

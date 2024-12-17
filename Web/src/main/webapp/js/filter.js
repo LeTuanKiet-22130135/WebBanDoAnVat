@@ -8,8 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const existingQuery = urlParams.get('query') || ''; // Get current query value, if any
 
     function sendFilterRequest() {
-        console.log('Checkbox change detected, sending request');
-
+       
         // Collect selected price ranges
         let selectedRanges = [];
         checkboxes.forEach(cb => {
@@ -41,9 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     		requestUrl += '?' + params.toString();
 		}
 
-        // Log the full URL being fetched
-        console.log(`Fetching data from: ${requestUrl}`);
-
         // Make AJAX request
         fetch(requestUrl, {
 			method: 'GET', // Ensure you're using the correct method
@@ -54,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
         .then(response => {
-			console.log(response.status);
             return response.text();
         })
         .then(html => {
