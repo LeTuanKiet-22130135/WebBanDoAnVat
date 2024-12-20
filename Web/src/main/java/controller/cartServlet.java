@@ -4,11 +4,13 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
 import jakarta.servlet.http.*;
 import model.*;
-import db.*;
+
 import java.io.*;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
+
+import dao.*;
 
 @WebServlet("/cart")
 public class cartServlet extends HttpServlet {
@@ -20,21 +22,20 @@ public class cartServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		// Ensure user is logged in
+		// Ensure the user is authenticated
 		HttpSession session = request.getSession(false);
-		if (session == null || session.getAttribute("user") == null) {
-			// Save redirect URL for post-login
-			String redirectUrl = request.getRequestURL() + "?" + request.getQueryString();
-			session = request.getSession(true);
-			session.setAttribute("redirectAfterLogin", redirectUrl);
-
-			// Redirect to login page
-			response.sendRedirect("login.jsp");
+		if (request.getUserPrincipal() == null) { // Check using container-managed authentication
+			response.sendRedirect("login.jsp"); // Fallback, though this should not be needed
 			return;
 		}
 
-		// Fetch user ID from session
-		int userId = (int) session.getAttribute("userId");
+		// Fetch the user ID using a session attribute or user principal
+		String username = request.getUserPrincipal().getName(); // Get the logged-in username
+		int userId = getUserIdByUsername(username); // Fetch user ID from the database based on username
+
+		if (userId == -1) {
+			throw new ServletException("User ID not found for username: " + username);
+		}
 
 		// Initialize cart and fetch its ID
 		Cart cart = new Cart();
@@ -67,19 +68,19 @@ public class cartServlet extends HttpServlet {
 			// Fetch cart items
 			String query = """
 					SELECT ci.id AS cart_item_id, 
-					                  p.id AS product_id, 
-					                  p.name, 
-					                  p.image AS product_image, 
-					                  p.price AS product_price, 
-					                  ci.quantity 
-					           FROM CartItem ci
-					           INNER JOIN Product p ON ci.product_id = p.id
-					           INNER JOIN Cart c ON ci.cart_id = c.id
-					           WHERE c.user_id = ?;
+					       p.id AS product_id, 
+					       p.name, 
+					       p.image AS product_image, 
+					       p.price AS product_price, 
+					       ci.quantity 
+					FROM CartItem ci
+					INNER JOIN Product p ON ci.product_id = p.id
+					INNER JOIN Cart c ON ci.cart_id = c.id
+					WHERE c.user_id = ?;
 					""";
 
 			try (PreparedStatement ps = conn.prepareStatement(query)) {
-				ps.setInt(1, cart.getId()); // Use the correct cart ID
+				ps.setInt(1, cart.getId());
 				try (ResultSet rs = ps.executeQuery()) {
 					List<CartItem> items = new ArrayList<>();
 					BigDecimal subtotal = BigDecimal.ZERO;
@@ -199,4 +200,20 @@ public class cartServlet extends HttpServlet {
 		// Redirect to cart page
 		response.sendRedirect("cart");
 	}
+
+	private int getUserIdByUsername(String username) {
+		try {
+			PreparedStatement stmt = conn.prepareStatement("SELECT id FROM user WHERE username = ?");
+			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				return rs.getInt("id");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1; // Return -1 if user not found
+	}
+
 }

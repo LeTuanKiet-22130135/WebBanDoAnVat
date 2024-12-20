@@ -54,8 +54,8 @@
         <div class="row align-items-center bg-light py-3 px-xl-5 d-none d-lg-flex">
             <div class="col-lg-4">
                 <a href="index" class="text-decoration-none">
-                    <span class="h1 text-uppercase text-primary bg-dark px-2">Multi</span>
-                    <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Shop</span>
+                    <span class="h1 text-uppercase text-primary bg-dark px-2">Shop</span>
+                    <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">AnVat</span>
                 </a>
             </div>
             <div class="col-lg-4 col-6 text-left">
@@ -104,14 +104,14 @@
                             </a>
                             <div class="nav-item dropdown">
                                 <c:choose>
-                                    <c:when test="${empty sessionScope.user}">
+                                    <c:when test="${empty pageContext.request.remoteUser}">
                                         <a href="login.jsp" class="nav-link" style="color: white;">
                                             <i class="fa fa-user"></i> Login
                                         </a>
                                     </c:when>
                                     <c:otherwise>
                                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                                            <i class="fa fa-user text-primary"></i> ${sessionScope.user}
+                                            <i class="fa fa-user text-primary"></i> ${pageContext.request.remoteUser}
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
                                             <a href="profile.jsp" class="dropdown-item">My Profile</a>
