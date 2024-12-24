@@ -13,7 +13,7 @@
 							Control
 					</a></li>
 					<li class="nav-item"><a class="nav-link text-light"
-						href="productListControl.jsp"> <i class="fas fa-boxes"></i>
+						href="ProductControl"> <i class="fas fa-boxes"></i>
 							Product List Control
 					</a></li>
 					<li class="nav-item"><a class="nav-link text-light"
@@ -52,7 +52,7 @@
 							</div>
 							<div class="card-body">
 								<p>View, add, update, or delete products in your catalog.</p>
-								<a href="productListControl.jsp" class="btn btn-success">Go
+								<a href="ProductControl" class="btn btn-success">Go
 									to Product List Control</a>
 							</div>
 						</div>

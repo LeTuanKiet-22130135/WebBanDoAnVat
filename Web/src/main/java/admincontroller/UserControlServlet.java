@@ -49,6 +49,6 @@ public class UserControlServlet extends HttpServlet {
         }
 
         // Redirect to refresh the user list
-        response.sendRedirect("UserControlServlet");
+        response.sendRedirect("UserControl");
     }
 }

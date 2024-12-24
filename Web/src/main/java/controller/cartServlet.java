@@ -17,6 +17,7 @@ public class cartServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private Connection conn = DBConnection.getConnection();
+	private final UserDAO userDAO = new UserDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -24,14 +25,14 @@ public class cartServlet extends HttpServlet {
 
 		// Ensure the user is authenticated
 		HttpSession session = request.getSession(false);
-		if (request.getUserPrincipal() == null) { // Check using container-managed authentication
-			response.sendRedirect("login.jsp"); // Fallback, though this should not be needed
+		if (request.getUserPrincipal().getName() == null) { // Check using container-managed authentication
+			response.sendRedirect("login"); // Fallback, though this should not be needed
 			return;
 		}
 
 		// Fetch the user ID using a session attribute or user principal
 		String username = request.getUserPrincipal().getName(); // Get the logged-in username
-		int userId = getUserIdByUsername(username); // Fetch user ID from the database based on username
+		int userId = userDAO.getUserIdByUsername(username); // Fetch user ID from the database based on username
 
 		if (userId == -1) {
 			throw new ServletException("User ID not found for username: " + username);
@@ -121,99 +122,86 @@ public class cartServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
+	        throws ServletException, IOException {
+	    HttpSession session = request.getSession(false);
 
-		// Ensure the user is logged in
-		if (session == null || session.getAttribute("userId") == null) {
-			session = request.getSession(true);
-			session.setAttribute("redirectAfterLogin", request.getRequestURL() + "?" + request.getQueryString());
-			response.sendRedirect("login.jsp");
-			return;
-		}
+	    // Ensure the user is authenticated
+	    if (request.getUserPrincipal() == null) {
+	        response.sendRedirect("login.jsp");
+	        return;
+	    }
 
-		int userId = (Integer) session.getAttribute("userId");
-		String action = request.getParameter("action");
-		int productId = Integer.parseInt(request.getParameter("productId"));
+	    // Fetch the user ID based on the authenticated principal
+	    String username = request.getUserPrincipal().getName();
+	    int userId = userDAO.getUserIdByUsername(username);
 
-		if ("add".equals(action)) {
-			try {
-				// Check if the cart already exists for the user
-				String cartQuery = "SELECT id FROM Cart WHERE user_id = ?";
-				int cartId;
+	    if (userId == -1) {
+	        response.sendRedirect("login.jsp");
+	        return;
+	    }
 
-				try (PreparedStatement cartStmt = conn.prepareStatement(cartQuery)) {
-					cartStmt.setInt(1, userId);
-					try (ResultSet cartRs = cartStmt.executeQuery()) {
-						if (cartRs.next()) {
-							cartId = cartRs.getInt("id");
-						} else {
-							// Create a new cart if none exists
-							String createCartQuery = "INSERT INTO Cart (user_id, created_at) VALUES (?, NOW())";
-							try (PreparedStatement createCartStmt = conn.prepareStatement(createCartQuery, Statement.RETURN_GENERATED_KEYS)) {
-								createCartStmt.setInt(1, userId);
-								createCartStmt.executeUpdate();
-								try (ResultSet generatedKeys = createCartStmt.getGeneratedKeys()) {
-									if (generatedKeys.next()) {
-										cartId = generatedKeys.getInt(1);
-									} else {
-										throw new SQLException("Failed to create cart for user");
-									}
-								}
-							}
-						}
-					}
-				}
+	    // Process the add-to-cart action
+	    String action = request.getParameter("action");
+	    int productId = Integer.parseInt(request.getParameter("productId"));
 
-				// Check if the product is already in the cart
-				String cartItemQuery = "SELECT id, quantity FROM CartItem WHERE cart_id = ? AND product_id = ?";
-				try (PreparedStatement cartItemStmt = conn.prepareStatement(cartItemQuery)) {
-					cartItemStmt.setInt(1, cartId);
-					cartItemStmt.setInt(2, productId);
-					try (ResultSet cartItemRs = cartItemStmt.executeQuery()) {
-						if (cartItemRs.next()) {
-							// Update quantity if the product exists
-							int existingQuantity = cartItemRs.getInt("quantity");
-							String updateQuery = "UPDATE CartItem SET quantity = ? WHERE id = ?";
-							try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
-								updateStmt.setInt(1, existingQuantity + 1);
-								updateStmt.setInt(2, cartItemRs.getInt("id"));
-								updateStmt.executeUpdate();
-							}
-						} else {
-							// Add the product as a new cart item
-							String insertQuery = "INSERT INTO CartItem (cart_id, product_id, quantity) VALUES (?, ?, ?)";
-							try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
-								insertStmt.setInt(1, cartId);
-								insertStmt.setInt(2, productId);
-								insertStmt.setInt(3, 1);
-								insertStmt.executeUpdate();
-							}
-						}
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+	    if ("add".equals(action)) {
+	        try {
+	            // Retrieve or create the cart
+	            String cartQuery = "SELECT id FROM Cart WHERE user_id = ?";
+	            int cartId = 0;
 
-		// Redirect to cart page
-		response.sendRedirect("cart");
-	}
+	            try (PreparedStatement cartStmt = conn.prepareStatement(cartQuery)) {
+	                cartStmt.setInt(1, userId);
+	                try (ResultSet cartRs = cartStmt.executeQuery()) {
+	                    if (cartRs.next()) {
+	                        cartId = cartRs.getInt("id");
+	                    } else {
+	                        String createCartQuery = "INSERT INTO Cart (user_id, created_at) VALUES (?, NOW())";
+	                        try (PreparedStatement createCartStmt = conn.prepareStatement(createCartQuery, Statement.RETURN_GENERATED_KEYS)) {
+	                            createCartStmt.setInt(1, userId);
+	                            createCartStmt.executeUpdate();
+	                            try (ResultSet generatedKeys = createCartStmt.getGeneratedKeys()) {
+	                                if (generatedKeys.next()) {
+	                                    cartId = generatedKeys.getInt(1);
+	                                }
+	                            }
+	                        }
+	                    }
+	                }
+	            }
 
-	private int getUserIdByUsername(String username) {
-		try {
-			PreparedStatement stmt = conn.prepareStatement("SELECT id FROM user WHERE username = ?");
-			stmt.setString(1, username);
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				return rs.getInt("id");
-			}
+	            // Add or update the product in the cart
+	            String cartItemQuery = "SELECT id, quantity FROM CartItem WHERE cart_id = ? AND product_id = ?";
+	            try (PreparedStatement cartItemStmt = conn.prepareStatement(cartItemQuery)) {
+	                cartItemStmt.setInt(1, cartId);
+	                cartItemStmt.setInt(2, productId);
+	                try (ResultSet cartItemRs = cartItemStmt.executeQuery()) {
+	                    if (cartItemRs.next()) {
+	                        int existingQuantity = cartItemRs.getInt("quantity");
+	                        String updateQuery = "UPDATE CartItem SET quantity = ? WHERE id = ?";
+	                        try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+	                            updateStmt.setInt(1, existingQuantity + 1);
+	                            updateStmt.setInt(2, cartItemRs.getInt("id"));
+	                            updateStmt.executeUpdate();
+	                        }
+	                    } else {
+	                        String insertQuery = "INSERT INTO CartItem (cart_id, product_id, quantity) VALUES (?, ?, ?)";
+	                        try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+	                            insertStmt.setInt(1, cartId);
+	                            insertStmt.setInt(2, productId);
+	                            insertStmt.setInt(3, 1);
+	                            insertStmt.executeUpdate();
+	                        }
+	                    }
+	                }
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    }
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return -1; // Return -1 if user not found
+	    // Redirect to cart page
+	    response.sendRedirect("cart");
 	}
 
 }

@@ -105,7 +105,7 @@
                             <div class="nav-item dropdown">
                                 <c:choose>
                                     <c:when test="${empty pageContext.request.remoteUser}">
-                                        <a href="login.jsp" class="nav-link" style="color: white;">
+                                        <a href="login" class="nav-link" style="color: white;">
                                             <i class="fa fa-user"></i> Login
                                         </a>
                                     </c:when>

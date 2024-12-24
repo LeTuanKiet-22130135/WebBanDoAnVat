@@ -1,4 +1,4 @@
-<%@ include file="header.jsp"%>
+<%@ include file="../header.jsp"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <body>
 	<div class="container mt-5">
@@ -7,6 +7,7 @@
 				<h3 class="text-center">Login</h3>
 				<!-- The form action points to the default FORM authentication endpoint -->
 				<form action="j_security_check" method="post">
+					<input type="hidden" name="redirectAfterLogin" value="index.jsp">					
 					<div class="form-group">
 						<label for="username">Username</label> <input type="text"
 							name="j_username" id="username" class="form-control" required>
@@ -25,5 +26,4 @@
 			</div>
 		</div>
 	</div>
-</body>
-</html>
+<%@ include file="../footer.jsp"%>

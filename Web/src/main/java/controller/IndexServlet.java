@@ -22,7 +22,7 @@ public class IndexServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {		
 		Connection connection = DBConnection.getConnection();
 		List<Product> products = new ArrayList<>();
         String query = "SELECT * FROM product";

@@ -1,4 +1,4 @@
-package controller;
+package admincontroller;
 
 import java.io.IOException;
 
@@ -9,8 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/logout")
-public class LogoutServlet extends HttpServlet{
+@WebServlet("/admin/adminlogout")
+public class AdminLogoutServlet extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
 
@@ -21,6 +21,6 @@ public class LogoutServlet extends HttpServlet{
             session.invalidate(); // Destroy session
         }
         req.logout();
-        resp.sendRedirect("index"); // Redirect to login page
+        resp.sendRedirect("/Web/index"); 
 	}
 }
