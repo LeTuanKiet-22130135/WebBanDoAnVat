@@ -4,6 +4,7 @@ import model.Product;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ProductDAO {
@@ -94,5 +95,75 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return product;
+    }
+    
+ // New method to fetch products by search term and price range
+    public List<Product> getProductsByCriteria(String queryParam, String[] priceRanges) {
+        List<Product> products = new ArrayList<>();
+        StringBuilder productQuery = new StringBuilder("SELECT * FROM Product");
+        List<String> conditions = new ArrayList<>();
+        List<Object> parameters = new ArrayList<>();
+
+        try {
+            // Add condition for search term if provided
+            if (queryParam != null && !queryParam.trim().isEmpty()) {
+                conditions.add("LOWER(name) LIKE ?");
+                parameters.add("%" + queryParam.toLowerCase() + "%");
+            }
+
+            // Add conditions for selected price ranges if applicable
+            if (priceRanges != null && !Arrays.asList(priceRanges).contains("all")) {
+                List<String> priceConditions = new ArrayList<>();
+                for (String range : priceRanges) {
+                    switch (range) {
+                        case "0-10000":
+                            priceConditions.add("price BETWEEN 0 AND 10000");
+                            break;
+                        case "10001-20000":
+                            priceConditions.add("price BETWEEN 10001 AND 20000");
+                            break;
+                        case "20001-30000":
+                            priceConditions.add("price BETWEEN 20001 AND 30000");
+                            break;
+                        case "30001-40000":
+                            priceConditions.add("price BETWEEN 30001 AND 40000");
+                            break;
+                        case "40001-50000":
+                            priceConditions.add("price BETWEEN 40001 AND 50000");
+                            break;
+                    }
+                }
+                if (!priceConditions.isEmpty()) {
+                    conditions.add("(" + String.join(" OR ", priceConditions) + ")");
+                }
+            }
+
+            // Combine conditions if any exist
+            if (!conditions.isEmpty()) {
+                productQuery.append(" WHERE ").append(String.join(" AND ", conditions));
+            }
+
+            // Prepare statement and set parameters
+            PreparedStatement stmt = conn.prepareStatement(productQuery.toString());
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
+            // Execute query and build product list
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt("id"));
+                product.setName(rs.getString("name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setImageUrl(rs.getString("image"));
+                product.setQuantity(rs.getInt("quantity"));
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
     }
 }

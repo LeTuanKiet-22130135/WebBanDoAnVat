@@ -5,66 +5,36 @@ import jakarta.servlet.annotation.*;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import dao.DBConnection;
+import dao.CartDAO;
 
 @WebServlet("/UpdateCartServlet")
 public class UpdateCartServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private Connection conn = DBConnection.getConnection();
-    
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	// TODO Auto-generated method stub
-    	super.doGet(req, resp);
-    }
+    private final CartDAO cartDAO = new CartDAO();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            // Redirect to login if not logged in
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        int userId = (int) session.getAttribute("userId");
+        
+        String username = request.getUserPrincipal().getName();
         int productId = Integer.parseInt(request.getParameter("productId"));
         String action = request.getParameter("action");
 
         try {
-            // Fetch cart ID for the user
-            String cartQuery = "SELECT id FROM Cart WHERE user_id = ?";
-            int cartId = -1;
-            try (PreparedStatement cartStmt = conn.prepareStatement(cartQuery)) {
-                cartStmt.setInt(1, userId);
-                var rs = cartStmt.executeQuery();
-                if (rs.next()) {
-                    cartId = rs.getInt("id");
-                } else {
-                    response.sendRedirect("cart");
-                    return;
-                }
+            // Fetch or validate the cart ID using CartDAO
+            int cartId = cartDAO.getCartIdByUsername(username);
+            if (cartId == -1) {
+                response.sendRedirect("cart");
+                return;
             }
 
-            // Update the quantity in the database
-            String updateQuery = null;
+            // Update the cart item quantity based on the action
             if ("increase".equals(action)) {
-                updateQuery = "UPDATE CartItem SET quantity = quantity + 1 WHERE cart_id = ? AND product_id = ?";
+                cartDAO.updateCartItemQuantity(cartId, productId, 1);
             } else if ("decrease".equals(action)) {
-                updateQuery = "UPDATE CartItem SET quantity = quantity - 1 WHERE cart_id = ? AND product_id = ? AND quantity > 1";
-            }
-
-            if (updateQuery != null) {
-                try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
-                    updateStmt.setInt(1, cartId);
-                    updateStmt.setInt(2, productId);
-                    updateStmt.executeUpdate();
-                }
+                cartDAO.updateCartItemQuantity(cartId, productId, -1);
             }
         } catch (SQLException e) {
             e.printStackTrace();

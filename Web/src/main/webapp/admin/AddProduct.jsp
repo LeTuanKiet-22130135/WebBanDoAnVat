@@ -4,7 +4,7 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center">Add Product</h1>
-        <form action="AddProductServlet" method="post">
+        <form action="AddProductServlet" method="post" enctype="multipart/form-data">
             <input type="hidden" name="action" value="add">
             <div class="form-row">
                 <div class="form-group col-md-6">
@@ -22,8 +22,8 @@
                     <input type="number" class="form-control" id="quantity" name="quantity" required>
                 </div>
                 <div class="form-group col-md-6">
-                    <label for="imageUrl">Image URL</label>
-                    <input type="text" class="form-control" id="imageUrl" name="imageUrl">
+                    <label for="imageFile">Product Image</label>
+                    <input type="file" class="form-control" id="imageFile" name="imageFile" required>
                 </div>
             </div>
             <div class="form-group">
@@ -34,4 +34,3 @@
         </form>
     </div>
 </body>
-

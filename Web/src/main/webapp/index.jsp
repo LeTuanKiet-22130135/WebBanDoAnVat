@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page import="model.Product" %>
 <%@ include file="header.jsp"%>
 
@@ -25,15 +27,15 @@
 						<div
 							class="carousel-caption d-flex flex-column align-items-center justify-content-center">
 							<div class="p-3" style="max-width: 700px;">
-								<h1
-									class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Men
-									Fashion</h1>
-								<p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem
-									rebum magna amet lorem magna erat diam stet. Sadips duo stet
-									amet amet ndiam elitr ipsum diam</p>
+								<h1 class="display-4 text-white mb-3 animate__animated animate__fadeInDown">
+									<fmt:message key="carousel.dryfood" />
+								</h1>
+								<p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+									<fmt:message key="carousel.dryfoodDest" />
+								</p>
 								<a
 									class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
-									href="#">Shop Now</a>
+									href="#"><fmt:message key="button.shopNow" /></a>
 							</div>
 						</div>
 					</div>
@@ -44,14 +46,12 @@
 							class="carousel-caption d-flex flex-column align-items-center justify-content-center">
 							<div class="p-3" style="max-width: 700px;">
 								<h1
-									class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Women
-									Fashion</h1>
-								<p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem
-									rebum magna amet lorem magna erat diam stet. Sadips duo stet
-									amet amet ndiam elitr ipsum diam</p>
+									class="display-4 text-white mb-3 animate__animated animate__fadeInDown">
+									<fmt:message key="carousel.foodbanner"/></h1>
+								<p class="mx-md-5 px-5 animate__animated animate__bounceIn"><fmt:message key="carousel.foodbannerDest" /></p>
 								<a
 									class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
-									href="#">Shop Now</a>
+									href="#"><fmt:message key="button.shopNow" /></a>
 							</div>
 						</div>
 					</div>
@@ -62,14 +62,13 @@
 							class="carousel-caption d-flex flex-column align-items-center justify-content-center">
 							<div class="p-3" style="max-width: 700px;">
 								<h1
-									class="display-4 text-white mb-3 animate__animated animate__fadeInDown">Kids
-									Fashion</h1>
-								<p class="mx-md-5 px-5 animate__animated animate__bounceIn">Lorem
-									rebum magna amet lorem magna erat diam stet. Sadips duo stet
-									amet amet ndiam elitr ipsum diam</p>
+									class="display-4 text-white mb-3 animate__animated animate__fadeInDown"><fmt:message key="carousel.tea" /></h1>
+								<p class="mx-md-5 px-5 animate__animated animate__bounceIn">
+									<fmt:message key="carousel.teaDest" />
+								</p>
 								<a
 									class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
-									href="#">Shop Now</a>
+									href="#"><fmt:message key="button.shopNow" /></a>
 							</div>
 						</div>
 					</div>
@@ -80,17 +79,15 @@
 			<div class="product-offer mb-30" style="height: 200px;">
 				<img class="img-fluid" src="img/offer-1.jpg" alt="">
 				<div class="offer-text">
-					<h6 class="text-white text-uppercase">Save 20%</h6>
-					<h3 class="text-white mb-3">Special Offer</h3>
-					<a href="" class="btn btn-primary">Shop Now</a>
+					<h3 class="text-white mb-3"><fmt:message key="carousel.specialOffer" /></h3>
+					<a href="" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
 				</div>
 			</div>
 			<div class="product-offer mb-30" style="height: 200px;">
 				<img class="img-fluid" src="img/offer-2.jpg" alt="">
 				<div class="offer-text">
-					<h6 class="text-white text-uppercase">Save 20%</h6>
-					<h3 class="text-white mb-3">Special Offer</h3>
-					<a href="" class="btn btn-primary">Shop Now</a>
+					<h3 class="text-white mb-3"><fmt:message key="carousel.specialOffer" /></h3>
+					<a href="" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
 				</div>
 			</div>
 		</div>

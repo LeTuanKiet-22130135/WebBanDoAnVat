@@ -1,74 +1,66 @@
 package controller;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.*;
+import jakarta.servlet.http.*;
 
-import dao.DBConnection;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import dao.CartDAO;
 import model.Cart;
-import model.CartItem;
 
 @WebServlet("/RemoveFromCartServlet")
 public class RemoveFromCartServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private final CartDAO cartDAO = new CartDAO();
 
-	private final Connection conn = DBConnection.getConnection();
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {   
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-			
-		// Check if the user has a valid cart in session
-		if (session == null || session.getAttribute("cart") == null) {
-			response.sendRedirect("cart.jsp");
-			return;
-		}
+        String username = request.getUserPrincipal().getName();
+        String productIdParam = request.getParameter("productId");
 
-		// Retrieve the cart and productId from the request
-		Cart cart = (Cart) session.getAttribute("cart");
-		String productIdParam = request.getParameter("productId");
-		
-		if (productIdParam == null || productIdParam.isEmpty()) {
-			response.sendRedirect("cart.jsp");
-			return;
-		}
+        if (productIdParam == null || productIdParam.isEmpty()) {
+            response.sendRedirect("cart");
+            return;
+        }
 
-		try {	
-			int productId = Integer.parseInt(productIdParam);
+        try {
+            int productId = Integer.parseInt(productIdParam);
+            int cartId = cartDAO.getCartIdByUsername(username);
 
-			// SQL query to remove the cart item from the database
-			String deleteQuery = "DELETE FROM cartitem WHERE cart_id = ? AND product_id = ?";
+            if (cartId == -1) {
+                response.sendRedirect("cart");
+                return;
+            }
 
-			PreparedStatement pstmt = conn.prepareStatement(deleteQuery);
-			pstmt.setInt(1, cart.getId());
-			pstmt.setInt(2, productId);
-			pstmt.executeUpdate();
+            // Remove the item from the cart using CartDAO
+            cartDAO.removeItemFromCart(cartId, productId);
 
-			// Update the cart object in session by removing the item
-			List<CartItem> items = cart.getItems();
-			items.removeIf(item -> item.getProductId() == productId);
-			cart.setItems(items);
-			session.setAttribute("cart", cart);
+            // Update the session cart (if present)
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                Cart cart = (Cart) session.getAttribute("cart");
+                if (cart != null) {
+                    cart.getItems().removeIf(item -> item.getProductId() == productId);
+                    session.setAttribute("cart", cart);
+                }
+            }
 
-		} catch (NumberFormatException | SQLException e) {
-			e.printStackTrace();
-			throw new ServletException("Error while removing the item from cart.", e);
-		}
+        } catch (NumberFormatException | SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Error while removing the item from cart.", e);
+        }
 
-		// Redirect back to the cart page
-		response.sendRedirect("cart");
-	}
+        // Redirect back to the cart page
+        response.sendRedirect("cart");
+    }
 
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
-	}
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
 }

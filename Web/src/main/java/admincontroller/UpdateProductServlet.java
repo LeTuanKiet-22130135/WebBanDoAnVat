@@ -19,7 +19,7 @@ import java.nio.file.*;
 public class UpdateProductServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    private static final String UPLOAD_DIR = "img";
+    private static final String UPLOAD_DIR = "img/";
     private ProductDAO productDAO = new ProductDAO();
 
     @Override
@@ -37,7 +37,7 @@ public class UpdateProductServlet extends HttpServlet {
 
         // Set product as a request attribute and forward to the JSP
         request.setAttribute("product", product);
-        request.getRequestDispatcher("updateProduct.jsp").forward(request, response);
+        request.getRequestDispatcher("UpdateProduct.jsp").forward(request, response);
     }
 
     @Override
@@ -50,24 +50,26 @@ public class UpdateProductServlet extends HttpServlet {
         product.setPrice(new BigDecimal(request.getParameter("price")));
         product.setQuantity(Integer.parseInt(request.getParameter("quantity")));
 
+        // Define the absolute path to your workspace's `img` folder
+        String workspaceImgPath = "C:\\Users\\asus\\git\\WebBanDoAnVat\\Web\\src\\main\\webapp\\img";
+
         // Handle file upload
         Part filePart = request.getPart("imageFile");
         if (filePart != null && filePart.getSize() > 0) {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
 
-            // Create the upload directory if it does not exist
-            File uploadDir = new File(uploadPath);
+            // Save the file to the workspace's `img` folder
+            File uploadDir = new File(workspaceImgPath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdir();
             }
 
-            // Save the file to the upload directory
-            String filePath = uploadPath + File.separator + fileName;
+            String filePath = workspaceImgPath + File.separator + fileName;
+            System.out.println("Saving file to: " + filePath);
             filePart.write(filePath);
 
             // Set the relative file path for the product image
-            product.setImageUrl(UPLOAD_DIR + "/" + fileName);
+            product.setImageUrl(UPLOAD_DIR + fileName);
         } else {
             // If no file is uploaded, retain the current image URL
             product.setImageUrl(request.getParameter("currentImageUrl"));
@@ -79,4 +81,5 @@ public class UpdateProductServlet extends HttpServlet {
         // Redirect back to ProductControl page
         response.sendRedirect("ProductControl");
     }
+
 }

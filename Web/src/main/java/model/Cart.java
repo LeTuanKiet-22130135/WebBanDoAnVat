@@ -1,5 +1,6 @@
 package model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -42,6 +43,13 @@ public class Cart {
 		this.items = items;
 	}
 	
-	
+	// New method to calculate the subtotal
+    public BigDecimal getSubtotal() {
+        BigDecimal subtotal = BigDecimal.ZERO;
+        for (CartItem item : items) {
+            subtotal = subtotal.add(item.getTotalPrice());
+        }
+        return subtotal;
+    }
 	
 }

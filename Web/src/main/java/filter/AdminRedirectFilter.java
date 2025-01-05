@@ -27,11 +27,20 @@ public class AdminRedirectFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        String uri = httpRequest.getRequestURI();
+        String contextPath = httpRequest.getContextPath();
+
+        // Allow static resources (e.g., images, CSS, JS) to pass through
+        if (uri.startsWith(contextPath + "/img") || 
+            uri.startsWith(contextPath + "/css") || 
+            uri.startsWith(contextPath + "/js") || 
+            uri.startsWith(contextPath + "/lib")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         // Check if the user is authenticated and an admin
         if (httpRequest.isUserInRole("1")) { // Admin role
-            String uri = httpRequest.getRequestURI();
-            String contextPath = httpRequest.getContextPath();
-
             // Block access to pages outside /admin
             if (!uri.startsWith(contextPath + "/admin")) {
                 httpResponse.sendRedirect(contextPath + "/admin/AdminIndex.jsp");

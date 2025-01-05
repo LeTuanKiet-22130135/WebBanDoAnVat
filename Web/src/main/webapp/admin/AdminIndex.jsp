@@ -38,7 +38,7 @@
 							<div class="card-body">
 								<p>Manage registered users, update their roles, or remove
 									accounts.</p>
-								<a href="userControl.jsp" class="btn btn-primary">Go to User
+								<a href="UserControl" class="btn btn-primary">Go to User
 									Control</a>
 							</div>
 						</div>

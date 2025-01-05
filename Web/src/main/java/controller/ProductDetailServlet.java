@@ -1,11 +1,8 @@
 package controller;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 
-import dao.DBConnection;
+import dao.ProductDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +14,7 @@ import model.Product;
 public class ProductDetailServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
+	private final ProductDAO dao = new ProductDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -26,28 +24,7 @@ public class ProductDetailServlet extends HttpServlet {
 			resp.sendRedirect("index.jsp");
 			return;
 		}
-
-		Connection connection = DBConnection.getConnection();
-		Product product = null;
-
-		try {
-			// Fetch product details
-			String productQuery = "SELECT * FROM product WHERE id = ?";
-			PreparedStatement productStmt = connection.prepareStatement(productQuery);
-			productStmt.setInt(1, Integer.parseInt(productId)); // Set the product ID
-			ResultSet rs = productStmt.executeQuery();
-			if (rs.next()) {
-				product = new Product();
-				product.setId(rs.getInt("id"));
-				product.setName(rs.getString("name"));
-				product.setDescription(rs.getString("description"));
-				product.setPrice(rs.getBigDecimal("price"));
-				product.setImageUrl(rs.getString("image"));
-				product.setQuantity(rs.getInt("quantity"));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Product product = dao.getProductById(Integer.parseInt(productId));
 
 		req.setAttribute("product", product);
 		req.getRequestDispatcher("detail.jsp").forward(req, resp);

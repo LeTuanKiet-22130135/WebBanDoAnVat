@@ -46,7 +46,7 @@
                                         <tr>
                                             <td>${product.id}</td>
                                             <td>
-                                                <img src="${product.imageUrl}" alt="${product.name}" 
+                                                <img src="${pageContext.request.contextPath}/${product.imageUrl}" alt="${product.name}" 
                                                     class="img-thumbnail" style="max-width: 75px; max-height: 75px;">
                                             </td>
                                             <td>${product.name}</td>
@@ -55,7 +55,7 @@
                                             <td>
                                                 <a href="UpdateProductServlet?id=${product.id}" 
                                                 	class="btn btn-sm btn-primary">Edit</a>
-                                                <a href="ProductServlet?action=delete&id=${product.id}" 
+                                                <a href="ProductControl?action=delete&id=${product.id}" 
                                                     class="btn btn-sm btn-danger">Delete</a>
                                             </td>
                                         </tr>
