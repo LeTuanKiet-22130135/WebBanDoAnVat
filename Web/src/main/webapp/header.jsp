@@ -143,7 +143,7 @@
 											${pageContext.request.remoteUser}
 										</a>
 										<div class="dropdown-menu dropdown-menu-right">
-											<a href="profile.jsp" class="dropdown-item">My Profile</a> <a
+											<a href="profile" class="dropdown-item">My Profile</a> <a
 												href="logout" class="dropdown-item">Logout</a>
 										</div>
 									</c:otherwise>
