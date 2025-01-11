@@ -1,5 +1,6 @@
 package controller;
 
+import util.PasswordUtil;
 import util.CodeGenerator;
 import util.EmailUtil;
 
@@ -12,10 +13,10 @@ import java.io.IOException;
 public class SignupServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	RequestDispatcher dispatcher = req.getRequestDispatcher("signup.jsp");
+        RequestDispatcher dispatcher = req.getRequestDispatcher("signup.jsp");
         dispatcher.forward(req, resp);
     }
 
@@ -28,22 +29,31 @@ public class SignupServlet extends HttpServlet {
         String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
 
-        // Generate verification code
-        String verificationCode = CodeGenerator.generateVerificationCode();
+        try {
+            // Hash the password using PasswordUtil
+            String hashedPassword = PasswordUtil.hashPassword(password);
 
-        // Store user details and code in session (for verification step)
-        HttpSession session = request.getSession();
-        session.setAttribute("username", username);
-        session.setAttribute("password", password);
-        session.setAttribute("firstName", firstName);
-        session.setAttribute("lastName", lastName);
-        session.setAttribute("email", email);
-        session.setAttribute("verificationCode", verificationCode);
+            // Generate verification code
+            String verificationCode = CodeGenerator.generateVerificationCode();
 
-        // Send verification email
-        EmailUtil.sendVerificationEmail(email, verificationCode);
+            // Store user details and code in session (for verification step)
+            HttpSession session = request.getSession();
+            session.setAttribute("username", username);
+            session.setAttribute("hashedPassword", hashedPassword); // Store hashed password
+            session.setAttribute("firstName", firstName);
+            session.setAttribute("lastName", lastName);
+            session.setAttribute("email", email);
+            session.setAttribute("verificationCode", verificationCode);
 
-        // Redirect to verify.jsp
-        response.sendRedirect("verify");
+            // Send verification email
+            EmailUtil.sendVerificationEmail(email, verificationCode);
+
+            // Redirect to verify.jsp
+            response.sendRedirect("verify");
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Error during signup. Please try again.");
+            request.getRequestDispatcher("signup.jsp").forward(request, response);
+        }
     }
 }

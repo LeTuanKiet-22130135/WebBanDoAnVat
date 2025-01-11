@@ -26,7 +26,7 @@ public class UserDAO {
 				User user = new User();
 				user.setId(rs.getInt("id"));
 				user.setUsername(rs.getString("username"));
-				user.setAdmin(rs.getBoolean("isAdmin")); // Populate isAdmin field
+				user.setAdmin(rs.getBoolean("isAdmin"));
 				users.add(user);
 			}
 
@@ -90,10 +90,10 @@ public class UserDAO {
 		return user;
 	}
 
+	// Fetch user ID by username
 	public int getUserIdByUsername(String username) {
 		String query = "SELECT id FROM user WHERE username = ?";
-		try {
-			PreparedStatement stmt = connection.prepareStatement(query);
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
 			stmt.setString(1, username);
 			try (ResultSet rs = stmt.executeQuery()) {
 				if (rs.next()) {
@@ -103,40 +103,46 @@ public class UserDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // Return -1 if no user is found
+		return -1;
 	}
 
-	public void addUserWithProfile(String username, String password, String firstName, String lastName, String email) {
-		String userQuery = "INSERT INTO user (username, password, isAdmin) VALUES (?, ?, ?)";
-		String profileQuery = "INSERT INTO userprofile (user_id, first_name, last_name, email) VALUES (?, ?, ?, ?)";
+	public void addUserWithProfile(String username, String hashedPassword, String firstName, String lastName, String email) {
+	    String userQuery = "INSERT INTO user (username, password, isAdmin) VALUES (?, ?, ?)";
+	    String profileQuery = "INSERT INTO userprofile (user_id, first_name, last_name, email) VALUES (?, ?, ?, ?)";
 
-		try {
-			connection.setAutoCommit(false); // Begin transaction
-			PreparedStatement userStmt = connection.prepareStatement(userQuery, Statement.RETURN_GENERATED_KEYS);
-			// Insert user
-			userStmt.setString(1, username);
-			userStmt.setString(2, password); // Default password (to be updated later)
-			userStmt.setBoolean(3, false); // Regular user, not admin
-			userStmt.executeUpdate();
+	    try {
+	        connection.setAutoCommit(false); // Begin transaction
+	        PreparedStatement userStmt = connection.prepareStatement(userQuery, Statement.RETURN_GENERATED_KEYS);
 
-			// Get generated user ID
-			ResultSet rs = userStmt.getGeneratedKeys();
-			if (rs.next()) {
-				int userId = rs.getInt(1);
-				PreparedStatement profileStmt = connection.prepareStatement(profileQuery);
-				// Insert profile
-				profileStmt.setInt(1, userId);
-				profileStmt.setString(2, firstName);
-				profileStmt.setString(3, lastName);
-				profileStmt.setString(4, email);
-				profileStmt.executeUpdate();
-			}
+	        // Insert user with hashed password
+	        userStmt.setString(1, username);
+	        userStmt.setString(2, hashedPassword);
+	        userStmt.setBoolean(3, false); // Regular user, not admin
+	        userStmt.executeUpdate();
 
-			connection.commit(); // Commit transaction
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	        // Get generated user ID
+	        ResultSet rs = userStmt.getGeneratedKeys();
+	        if (rs.next()) {
+	            int userId = rs.getInt(1);
+	            PreparedStatement profileStmt = connection.prepareStatement(profileQuery);
+
+	            // Insert profile
+	            profileStmt.setInt(1, userId);
+	            profileStmt.setString(2, firstName);
+	            profileStmt.setString(3, lastName);
+	            profileStmt.setString(4, email);
+	            profileStmt.executeUpdate();
+	        }
+
+	        connection.commit(); // Commit transaction
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        try {
+	            connection.rollback(); // Rollback transaction on error
+	        } catch (SQLException rollbackEx) {
+	            rollbackEx.printStackTrace();
+	        }
+	    }
 	}
-
 
 }

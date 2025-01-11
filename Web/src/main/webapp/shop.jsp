@@ -7,40 +7,35 @@
         <!-- Filter Sidebar Start -->
         <div class="col-lg-3 col-md-4">
             <h5 class="section-title position-relative text-uppercase mb-3">
-                <span class="bg-secondary pr-3">Filter by price</span>
+                <span class="bg-secondary pr-3"><fmt:message key="shop.fliterByPrice"/></span>
             </h5>
             <div class="bg-light p-4 mb-30">
                 <!-- Price Filter Form -->
                 <form id="price-filter-form">
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="all" id="price-all">
-                        <label class="custom-control-label" for="price-all">All Price</label>
-                        <span class="badge border font-weight-normal">1000</span>
+                        <label class="custom-control-label" for="price-all"><fmt:message key="shop.allPrices"/></label>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="0-10000" id="price-1" >
-                        <label class="custom-control-label" for="price-1">$0 - $100</label>
-                        <span class="badge border font-weight-normal">150</span>
+                        <label class="custom-control-label" for="price-1">0 - 10000 đ</label>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="10001-20000" id="price-2">
-                        <label class="custom-control-label" for="price-2">$100 - $200</label>
-                        <span class="badge border font-weight-normal">295</span>
+                        <label class="custom-control-label" for="price-2">10000 - 20000 đ</label>
+
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="20001-30000" id="price-3">
-                        <label class="custom-control-label" for="price-3">$200 - $300</label>
-                        <span class="badge border font-weight-normal">246</span>
+                        <label class="custom-control-label" for="price-3">20000 - 30000 đ</label>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="30001-40000" id="price-4">
-                        <label class="custom-control-label" for="price-4">$300 - $400</label>
-                        <span class="badge border font-weight-normal">145</span>
+                        <label class="custom-control-label" for="price-4">30000 - 40000 đ</label>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="40001-50000" id="price-5">
-                        <label class="custom-control-label" for="price-5">$400 - $500</label>
-                        <span class="badge border font-weight-normal">168</span>
+                        <label class="custom-control-label" for="price-5">40000 - 50000 đ</label>
                     </div>
                 </form>
             </div>

@@ -1,22 +1,21 @@
 package controller;
 
+import dao.UserDAO;
+
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
 import jakarta.servlet.http.*;
-
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import dao.UserDAO;
 
 @WebServlet("/verify")
 public class VerifyCodeServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    	RequestDispatcher dispatcher = req.getRequestDispatcher("verify.jsp");
+        RequestDispatcher dispatcher = req.getRequestDispatcher("verify.jsp");
         dispatcher.forward(req, resp);
     }
 
@@ -31,17 +30,18 @@ public class VerifyCodeServlet extends HttpServlet {
         if (enteredCode != null && enteredCode.equals(actualCode)) {
             // Verification successful: add user to database
             String username = (String) session.getAttribute("username");
-            String password = (String) session.getAttribute("password");
+            String hashedPassword = (String) session.getAttribute("hashedPassword");
             String firstName = (String) session.getAttribute("firstName");
             String lastName = (String) session.getAttribute("lastName");
             String email = (String) session.getAttribute("email");
 
             // Call UserDAO to insert the user
             UserDAO userDAO = new UserDAO();
-            userDAO.addUserWithProfile(username, password, firstName, lastName, email);
+            userDAO.addUserWithProfile(username, hashedPassword, firstName, lastName, email);
 
-            // Clear session attributes and redirect to success page
-            session.removeAttribute("verificationCode");
+            // Clear session attributes
+            session.invalidate();
+
             // Send JavaScript response to show a popup and redirect to login
             response.setContentType("text/html");
             PrintWriter out = response.getWriter();
