@@ -9,8 +9,8 @@ public class EmailUtil {
 
     private static final String SMTP_HOST = "smtp.gmail.com";
     private static final String SMTP_PORT = "587";
-    private static final String USERNAME = "lkiet507@gmail.com";
-    private static final String PASSWORD = "lcctwlcimuzjqcbt";
+    private static final String USERNAME = null;
+    private static final String PASSWORD = null;
 
     public static void sendVerificationEmail(String recipientEmail, String verificationCode) {
         // Set up email properties

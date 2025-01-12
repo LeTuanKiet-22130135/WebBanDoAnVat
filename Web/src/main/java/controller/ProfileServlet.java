@@ -34,8 +34,7 @@ public class ProfileServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Get user ID from the session
-        HttpSession session = request.getSession(false);
-        int userId = (int) session.getAttribute("userId");
+        int userId = userDAO.getUserIdByUsername(request.getUserPrincipal().getName());
 
         // Create profile object and populate fields
         Profile profile = new Profile();
