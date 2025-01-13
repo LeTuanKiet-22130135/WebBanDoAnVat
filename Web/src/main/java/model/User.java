@@ -4,7 +4,6 @@ public class User {
     private int id;
     private String username;
     private String password;
-    private boolean isAdmin; // Add this field
 
     // Getters and Setters
     public int getId() {
@@ -31,11 +30,4 @@ public class User {
         this.password = password;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    public void setAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
-    }
 }

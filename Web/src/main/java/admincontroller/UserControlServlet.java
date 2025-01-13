@@ -19,8 +19,17 @@ public class UserControlServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Fetch all users
-        List<User> users = userDAO.getAllUsers();
+    	String query = request.getParameter("query");
+
+        List<User> users;
+        if (query != null && !query.trim().isEmpty()) {
+            // Search users by name
+            users = userDAO.searchUsersByName(query);
+        } else {
+            // Fetch all users if no query is provided
+            users = userDAO.getAllUsers();
+        }
+        
         request.setAttribute("users", users);
         request.getRequestDispatcher("UserControl.jsp").forward(request, response);
     }

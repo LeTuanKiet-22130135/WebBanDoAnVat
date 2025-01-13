@@ -12,7 +12,8 @@ public class ProfileDAO {
 
     public Profile getProfileByUserId(int userId) {
         String query = "SELECT * FROM userProfile WHERE user_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try {
+        	PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, userId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -42,7 +43,8 @@ public class ProfileDAO {
         String query = "UPDATE userProfile SET first_name = ?, last_name = ?, email = ?, mobile_no = ?, " +
                 "address_line1 = ?, address_line2 = ?, country = ?, city = ?, state = ?, zip_code = ? " +
                 "WHERE user_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        try {
+        	PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, profile.getFirstName());
             stmt.setString(2, profile.getLastName());
             stmt.setString(3, profile.getEmail());

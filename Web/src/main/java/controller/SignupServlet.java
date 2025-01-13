@@ -3,6 +3,7 @@ package controller;
 import util.PasswordUtil;
 import util.CodeGenerator;
 import util.EmailUtil;
+import dao.UserDAO;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
@@ -13,6 +14,7 @@ import java.io.IOException;
 public class SignupServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    private final UserDAO userDAO = new UserDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -25,11 +27,26 @@ public class SignupServlet extends HttpServlet {
             throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+        String repeatPassword = request.getParameter("repeatPassword");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
 
         try {
+            // Check if passwords match
+            if (!password.equals(repeatPassword)) {
+                request.setAttribute("errorMessage", "Passwords do not match.");
+                request.getRequestDispatcher("signup.jsp").forward(request, response);
+                return;
+            }
+
+            // Check if username already exists
+            if (userDAO.isUsernameTaken(username)) {
+                request.setAttribute("errorMessage", "Username already exists. Please choose another one.");
+                request.getRequestDispatcher("signup.jsp").forward(request, response);
+                return;
+            }
+
             // Hash the password using PasswordUtil
             String hashedPassword = PasswordUtil.hashPassword(password);
 

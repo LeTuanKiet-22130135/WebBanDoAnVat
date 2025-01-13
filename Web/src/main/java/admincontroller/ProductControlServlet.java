@@ -1,11 +1,15 @@
 package admincontroller;
 
-import jakarta.servlet.*;
-import jakarta.servlet.annotation.*;
-import jakarta.servlet.http.*;
-import dao.ProductDAO;
-
 import java.io.IOException;
+import java.util.List;
+
+import dao.ProductDAO;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import model.Product;
 
 @WebServlet("/admin/ProductControl")
 public class ProductControlServlet extends HttpServlet {
@@ -16,21 +20,25 @@ public class ProductControlServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	String query = request.getParameter("query");
+
+        List<Product> products;
+        if (query != null && !query.trim().isEmpty()) {
+            // Search products by name
+            products = productDAO.searchProductsByName(query);
+        } else {
+            // Fetch all products if no query is provided
+            products = productDAO.getAllProducts();
+        }
+    	
         String action = request.getParameter("action");
 
         if ("delete".equals(action)) {
             deleteProduct(request, response);
         } else {
-            displayProductList(request, response);
+        	request.setAttribute("products", products);
+        	request.getRequestDispatcher("ProductControl.jsp").forward(request, response);
         }
-    }
-
-    private void displayProductList(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // Load all products from the database
-        request.setAttribute("products", productDAO.getAllProducts());
-        // Forward to the product control JSP page
-        request.getRequestDispatcher("ProductControl.jsp").forward(request, response);
     }
 
     private void deleteProduct(HttpServletRequest request, HttpServletResponse response)

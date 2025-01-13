@@ -17,6 +17,7 @@
                     <a href="orderhistory" class="list-group-item list-group-item-action">
                         Order History
                     </a>
+                    <a href="changepassword" class="list-group-item list-group-item-action">Change Password</a>
                 </div>
             </div>
         </div>

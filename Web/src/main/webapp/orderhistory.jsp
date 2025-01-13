@@ -13,9 +13,9 @@
 				</h5>
 				<div class="list-group">
 					<a href="profile"
-						class="list-group-item list-group-item-action active"> Profile
+						class="list-group-item list-group-item-action"> Profile
 					</a> <a href="orderhistory"
-						class="list-group-item list-group-item-action"> Order History
+						class="list-group-item list-group-item-action active"> Order History
 					</a>
 				</div>
 			</div>

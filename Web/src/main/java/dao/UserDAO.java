@@ -1,6 +1,7 @@
 package dao;
 
 import model.User;
+import util.PasswordUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class UserDAO {
 	// Fetch all users
 	public List<User> getAllUsers() {
 		List<User> users = new ArrayList<>();
-		String query = "SELECT id, username, isAdmin FROM user";
+		String query = "SELECT id, username FROM user WHERE isAdmin = false";
 
 		try (PreparedStatement stmt = connection.prepareStatement(query);
 				ResultSet rs = stmt.executeQuery()) {
@@ -26,7 +27,6 @@ public class UserDAO {
 				User user = new User();
 				user.setId(rs.getInt("id"));
 				user.setUsername(rs.getString("username"));
-				user.setAdmin(rs.getBoolean("isAdmin"));
 				users.add(user);
 			}
 
@@ -70,7 +70,7 @@ public class UserDAO {
 
 	// Fetch a single user by ID
 	public User getUserById(int userId) {
-		String query = "SELECT id, username, isAdmin FROM user WHERE id = ?";
+		String query = "SELECT id, username FROM user WHERE id = ?";
 		User user = null;
 
 		try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -80,7 +80,6 @@ public class UserDAO {
 					user = new User();
 					user.setId(rs.getInt("id"));
 					user.setUsername(rs.getString("username"));
-					user.setAdmin(rs.getBoolean("isAdmin"));
 				}
 			}
 		} catch (SQLException e) {
@@ -107,42 +106,123 @@ public class UserDAO {
 	}
 
 	public void addUserWithProfile(String username, String hashedPassword, String firstName, String lastName, String email) {
-	    String userQuery = "INSERT INTO user (username, password, isAdmin) VALUES (?, ?, ?)";
-	    String profileQuery = "INSERT INTO userprofile (user_id, first_name, last_name, email) VALUES (?, ?, ?, ?)";
+		String userQuery = "INSERT INTO user (username, password, isAdmin) VALUES (?, ?, ?)";
+		String profileQuery = "INSERT INTO userprofile (user_id, first_name, last_name, email) VALUES (?, ?, ?, ?)";
 
-	    try {
-	        connection.setAutoCommit(false); // Begin transaction
-	        PreparedStatement userStmt = connection.prepareStatement(userQuery, Statement.RETURN_GENERATED_KEYS);
+		try {
+			connection.setAutoCommit(false); // Begin transaction
+			PreparedStatement userStmt = connection.prepareStatement(userQuery, Statement.RETURN_GENERATED_KEYS);
 
-	        // Insert user with hashed password
-	        userStmt.setString(1, username);
-	        userStmt.setString(2, hashedPassword);
-	        userStmt.setBoolean(3, false); // Regular user, not admin
-	        userStmt.executeUpdate();
+			// Insert user with hashed password
+			userStmt.setString(1, username);
+			userStmt.setString(2, hashedPassword);
+			userStmt.setBoolean(3, false); // Regular user, not admin
+			userStmt.executeUpdate();
 
-	        // Get generated user ID
-	        ResultSet rs = userStmt.getGeneratedKeys();
-	        if (rs.next()) {
-	            int userId = rs.getInt(1);
-	            PreparedStatement profileStmt = connection.prepareStatement(profileQuery);
+			// Get generated user ID
+			ResultSet rs = userStmt.getGeneratedKeys();
+			if (rs.next()) {
+				int userId = rs.getInt(1);
+				PreparedStatement profileStmt = connection.prepareStatement(profileQuery);
 
-	            // Insert profile
-	            profileStmt.setInt(1, userId);
-	            profileStmt.setString(2, firstName);
-	            profileStmt.setString(3, lastName);
-	            profileStmt.setString(4, email);
-	            profileStmt.executeUpdate();
-	        }
+				// Insert profile
+				profileStmt.setInt(1, userId);
+				profileStmt.setString(2, firstName);
+				profileStmt.setString(3, lastName);
+				profileStmt.setString(4, email);
+				profileStmt.executeUpdate();
+			}
 
-	        connection.commit(); // Commit transaction
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        try {
-	            connection.rollback(); // Rollback transaction on error
-	        } catch (SQLException rollbackEx) {
-	            rollbackEx.printStackTrace();
-	        }
-	    }
+			connection.commit(); // Commit transaction
+		} catch (SQLException e) {
+			e.printStackTrace();
+			try {
+				connection.rollback(); // Rollback transaction on error
+			} catch (SQLException rollbackEx) {
+				rollbackEx.printStackTrace();
+			}
+		}
 	}
+
+	// Method to update user password and salt
+	public boolean updateUserPassword(int userId, String hashedPassword) {
+		String query = "UPDATE user SET password = ? WHERE id = ?";
+
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setString(1, hashedPassword);
+			stmt.setInt(2, userId);
+			int affectedRows = stmt.executeUpdate();
+			return affectedRows > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	// Method to search users by username
+	public List<User> searchUsersByName(String name) {
+		List<User> users = new ArrayList<>();
+		String query = "SELECT id, username FROM user WHERE LOWER(username) LIKE ? AND isAdmin = 0";
+
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setString(1, "%" + name + "%");
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					User user = new User();
+					user.setId(rs.getInt("id"));
+					user.setUsername(rs.getString("username"));
+					users.add(user);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return users;
+	}
+
+	// Method to check if a username already exists
+	public boolean isUsernameTaken(String username) {
+		String query = "SELECT 1 FROM user WHERE username = ?";
+		try {
+			PreparedStatement stmt = connection.prepareStatement(query);
+			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
+			return rs.next(); // Returns true if a record is found
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	// Validate if the current password matches the stored password
+	public boolean validateUserPassword(String username, String enteredPassword) throws Exception {
+		String query = "SELECT password FROM user WHERE username = ?";
+		PreparedStatement stmt = connection.prepareStatement(query);
+		stmt.setString(1, username);
+		ResultSet rs = stmt.executeQuery();
+		if (rs.next()) {
+			String storedPassword = rs.getString("password");
+			return PasswordUtil.comparePassword(enteredPassword, storedPassword);
+		}
+		return false;
+	}
+
+	// Update user password
+	public boolean updateUserPassword(String username, String newPassword) {
+		String query = "UPDATE user SET password = ? WHERE username = ?";
+		try {
+			PreparedStatement stmt = connection.prepareStatement(query);
+			stmt.setString(1, newPassword);
+			stmt.setString(2, username);
+			int affectedRows = stmt.executeUpdate();
+			return affectedRows > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 
 }
