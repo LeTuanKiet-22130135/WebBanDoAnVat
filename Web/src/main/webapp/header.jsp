@@ -83,16 +83,13 @@
 						id="languageDropdown" data-toggle="dropdown" aria-haspopup="true"
 						aria-expanded="false">
 						<c:choose>
-							<c:when test="${param.lang == 'en' or empty param.lang}">English</c:when>
-							<c:when test="${param.lang == 'vi'}">Tiếng Việt</c:when>
+							<c:when test="${cookie.lang.value == 'en' || empty cookie.lang}">English</c:when>
+                            <c:when test="${cookie.lang.value == 'vi'}">Tiếng Việt</c:when>
 						</c:choose>
 					</button>
 					<div class="dropdown-menu" aria-labelledby="languageDropdown">
-						<a
-							class="dropdown-item <c:if test='${param.lang == "en" or empty param.lang}'>active</c:if>'"
-							href="?lang=en">English</a> <a
-							class="dropdown-item <c:if test='${param.lang == "vi"}'>active</c:if>'"
-							href="?lang=vi">Tiếng Việt</a>
+						<a class="dropdown-item ${cookie.lang.value == 'en' || empty cookie.lang ? 'active' : ''}" href="setLanguage?lang=en">English</a>
+                        <a class="dropdown-item ${cookie.lang.value == 'vi' ? 'active' : ''}" href="setLanguage?lang=vi">Tiếng Việt</a>
 					</div>
 				</div>
 
