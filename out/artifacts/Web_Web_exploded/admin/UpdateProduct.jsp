@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ include file="header.jsp"%>
+<%@ include file="../WEB-INF/admin/header.jsp"%>
 
 <body>
 	<div class="container mt-5">
@@ -31,7 +31,7 @@
 					<label for="imageFile">Product Image</label> <input type="file"
 						class="form-control" id="imageFile" name="imageFile"> <small
 						class="form-text text-muted">Current Image: <img
-						src="${pageContext.request.contextPath}/${product.imageUrl}"
+						src="${pageContext.request.contextPath}/imglocation/${product.imageUrl}"
 						alt="Product Image" style="max-width: 100px;">
 					</small>
 				</div>

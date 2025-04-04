@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ include file="header.jsp" %>
+<%@ include file="WEB-INF/header.jsp"%>
 
 <div class="container-fluid mt-5">
     <div class="row px-xl-5">
@@ -51,4 +51,4 @@
     </div>
 </div>
 
-<%@ include file="footer.jsp" %>
+<%@ include file="WEB-INF/footer.jsp" %>

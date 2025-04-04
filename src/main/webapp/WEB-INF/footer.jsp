@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<fmt:setLocale value="${cookie.lang.value != null ? cookie.lang.value : 'en'}" />
+<fmt:setBundle basename="i18n.messages" />
 <!-- Footer Start -->
 <div class="container-fluid bg-dark text-secondary mt-5 pt-5">
     <div class="row px-xl-5 pt-5">
@@ -66,7 +68,7 @@
         <div class="col-md-6 px-xl-0">
             <p class="mb-md-0 text-center text-md-left text-secondary">
                 &copy; <a class="text-primary" href="#">Domain</a>. <fmt:message key="footer.allRightsReserved" />
-                <fmt:message key="footer.designedBy" /> <a class="text-primary" href="https://htmlcodex.com">HTML Codex</a>
+                <fmt:message key="footer.designedBy" /> <a class="text-primary" href="#">Le Tuan Kiet</a>
             </p>
         </div>
         <div class="col-md-6 px-xl-0 text-center text-md-right">

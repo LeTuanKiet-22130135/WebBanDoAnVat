@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page import="model.Product" %>
-<%@ include file="header.jsp"%>
+<%@ include file="WEB-INF/header.jsp"%>
 
 <!-- Carousel Start -->
 <div class="container-fluid mb-3">
@@ -35,7 +35,7 @@
 								</p>
 								<a
 									class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
-									href="#"><fmt:message key="button.shopNow" /></a>
+									href="detail?id=10"><fmt:message key="button.shopNow" /></a>
 							</div>
 						</div>
 					</div>
@@ -51,7 +51,7 @@
 								<p class="mx-md-5 px-5 animate__animated animate__bounceIn"><fmt:message key="carousel.foodbannerDest" /></p>
 								<a
 									class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
-									href="#"><fmt:message key="button.shopNow" /></a>
+									href="detail?id=9"><fmt:message key="button.shopNow" /></a>
 							</div>
 						</div>
 					</div>
@@ -68,7 +68,7 @@
 								</p>
 								<a
 									class="btn btn-outline-light py-2 px-4 mt-3 animate__animated animate__fadeInUp"
-									href="#"><fmt:message key="button.shopNow" /></a>
+									href="detail?id=8"><fmt:message key="button.shopNow" /></a>
 							</div>
 						</div>
 					</div>
@@ -80,14 +80,14 @@
 				<img class="img-fluid" src="img/offer-1.jpg" alt="">
 				<div class="offer-text">
 					<h3 class="text-white mb-3"><fmt:message key="carousel.specialOffer" /></h3>
-					<a href="" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
+					<a href="shop" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
 				</div>
 			</div>
 			<div class="product-offer mb-30" style="height: 200px;">
 				<img class="img-fluid" src="img/offer-2.jpg" alt="">
 				<div class="offer-text">
 					<h3 class="text-white mb-3"><fmt:message key="carousel.specialOffer" /></h3>
-					<a href="" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
+					<a href="shop" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
 				</div>
 			</div>
 		</div>
@@ -140,7 +140,7 @@
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                 <div class="product-item bg-light mb-4">
                     <div class="product-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="${product.imageUrl}" alt="${product.name}">
+                        <img class="img-fluid w-100" src="${pageContext.request.contextPath}/imglocation/${product.imageUrl}" alt="${product.name}">
                         <div class="product-action">
                             <a class="btn btn-outline-dark btn-square" href="#"><i class="fa fa-shopping-cart"></i></a>
                             <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a>
@@ -153,14 +153,6 @@
                         <div class="d-flex align-items-center justify-content-center mt-2">
                             <h5>${product.price} đ</h5>
                         </div>
-                        <div class="d-flex align-items-center justify-content-center mb-1">
-                            <small class="fa fa-star text-primary mr-1"></small>
-                            <small class="fa fa-star text-primary mr-1"></small>
-                            <small class="fa fa-star text-primary mr-1"></small>
-                            <small class="fa fa-star text-primary mr-1"></small>
-                            <small class="fa fa-star-half-alt text-primary mr-1"></small>
-                            <small>(99)</small>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -170,4 +162,4 @@
 <!-- Products End -->
 
 
-<%@ include file="footer.jsp"%>
+<%@ include file="WEB-INF/footer.jsp"%>
