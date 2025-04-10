@@ -23,7 +23,7 @@
 					<div class="carousel-item position-relative active"
 						style="height: 430px;">
 						<img class="position-absolute w-100 h-100"
-							src="img/carousel-1.jpg" style="object-fit: cover;">
+							src="img/carousel-1.jpg" style="object-fit: cover;" alt="">
 						<div
 							class="carousel-caption d-flex flex-column align-items-center justify-content-center">
 							<div class="p-3" style="max-width: 700px;">
@@ -136,11 +136,11 @@
         <span class="bg-secondary pr-3"><fmt:message key="products.recent"/></span>
     </h2>
     <div class="row px-xl-5">
-        <c:forEach var="product" items="${products}">
+        <c:forEach var="product" items="${sessionScope.products}">
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                 <div class="product-item bg-light mb-4">
                     <div class="product-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="${pageContext.request.contextPath}/imglocation/${product.imageUrl}" alt="${product.name}">
+                        <img class="img-fluid w-100" src="${product.img}" alt="${product.name}">
                         <div class="product-action">
                             <a class="btn btn-outline-dark btn-square" href="#"><i class="fa fa-shopping-cart"></i></a>
                             <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a>
