@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c"%>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
 <fmt:setLocale value="${cookie.lang.value != null ? cookie.lang.value : 'en'}" />
-<fmt:setBundle basename="i18n.messages" />
+<fmt:setBundle basename="messages" />
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,7 +48,7 @@
 .account-login a:hover, .account-login .dropdown-item:hover {
 	color: #555 !important; /* Slightly lighter color on hover */
 }
-}
+
 </style>
 </head>
 
