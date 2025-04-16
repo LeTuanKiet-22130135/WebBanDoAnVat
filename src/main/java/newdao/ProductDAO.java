@@ -52,5 +52,42 @@ public class ProductDAO {
         return list;
     }
 
+    public Product getProductById(int id) {
+        String sql = "SELECT * FROM products WHERE id = ?";
+        Product product = null;
+        VariantDAO variantDAO = new VariantDAO();
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    product = new Product();
+                    product.setId(rs.getInt("id"));
+                    product.setCode(rs.getString("code"));
+                    product.setName(rs.getString("name"));
+                    product.setDesc(rs.getString("desc"));
+                    product.setImg(rs.getString("img"));
+                    product.setTypeId(rs.getInt("typeId"));
+                    product.setVariantId(rs.getInt("variantId"));
+                    product.setCreateAt(rs.getDate("createAt"));
+
+                    // Set variants
+                    List<Variant> variants = variantDAO.getVariantsByProductId(id);
+                    product.setVariants(variants);
+
+                    // Set price from the first variant if available
+                    if (!variants.isEmpty()) {
+                        product.setPrice(variants.get(0).getPrice());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return product;
+    }
+
 
 }
