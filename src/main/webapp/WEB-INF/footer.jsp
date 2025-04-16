@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
 <fmt:setLocale value="${cookie.lang.value != null ? cookie.lang.value : 'en'}" />
-<fmt:setBundle basename="i18n.messages" />
+<fmt:setBundle basename="messages" />
 <!-- Footer Start -->
 <div class="container-fluid bg-dark text-secondary mt-5 pt-5">
     <div class="row px-xl-5 pt-5">

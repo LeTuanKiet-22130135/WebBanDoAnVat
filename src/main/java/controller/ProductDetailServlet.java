@@ -1,24 +1,25 @@
 package controller;
 
 import java.io.IOException;
+import java.io.Serial;
 
-import dao.ProductDAO;
+import newdao.ProductDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Product;
+import newmodel.Product;
 
 @WebServlet("/detail")
 public class ProductDetailServlet extends HttpServlet {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private final ProductDAO dao = new ProductDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// Lay product id
 		String productId = req.getParameter("id");
 		if (productId == null || productId.isEmpty()) {
 			resp.sendRedirect("index.jsp");
@@ -34,5 +35,5 @@ public class ProductDetailServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		super.doPost(req, resp);
 	}
-	
+
 }
