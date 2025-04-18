@@ -34,8 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Construct the URL, avoiding appending an empty query string
-       	const baseUrl = window.location.origin + '/Web';
-		let requestUrl = `${baseUrl}/shop`;
+		let requestUrl = window.location.href;
 		if (params.toString()) {
     		requestUrl += '?' + params.toString();
 		}
