@@ -1,10 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8"
+		 pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
-<%@ page import="java.util.List" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
-<%@ page import="newmodel.Product" %>
 <%@ include file="WEB-INF/header.jsp"%>
 
 <!-- Carousel Start -->

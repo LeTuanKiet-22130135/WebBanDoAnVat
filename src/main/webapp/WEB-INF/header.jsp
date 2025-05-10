@@ -110,14 +110,14 @@
                             </a>
                             <div class="nav-item dropdown">
                                 <c:choose>
-                                    <c:when test="${empty pageContext.request.remoteUser}">
+                                    <c:when test="${empty sessionScope.username}">
                                         <a href="login" class="nav-link" style="color: white;">
                                             <i class="fa fa-user"></i> <fmt:message key="nav.login" />
                                         </a>
                                     </c:when>
                                     <c:otherwise>
                                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                                            <i class="fa fa-user text-primary"></i> ${pageContext.request.remoteUser}
+                                            <i class="fa fa-user text-primary"></i> ${sessionScope.username}
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
                                             <a href="profile" class="dropdown-item"><fmt:message key="nav.profile" /></a>
