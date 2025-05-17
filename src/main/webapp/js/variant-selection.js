@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const variantSelect = document.getElementById('variant-select');
     const priceDisplay = document.getElementById('product-price');
+    const addToCartForm = document.getElementById('add-to-cart-form');
+    const selectedVariantIdInput = document.getElementById('selected-variant-id');
 
     function formatCurrency(amount) {
         return new Intl.NumberFormat('vi-VN', {
@@ -9,14 +11,49 @@ document.addEventListener('DOMContentLoaded', function () {
         }).format(amount);
     }
 
-    variantSelect.addEventListener('change', function () {
-        const selectedOption = variantSelect.options[variantSelect.selectedIndex];
-        const price = parseFloat(selectedOption.getAttribute('data-price'));
-        priceDisplay.textContent = formatCurrency(price);
-    });
+    function updateVariantInfo() {
+        if (!variantSelect) {
+            console.error("Variant select element not found!");
+            return;
+        }
 
-    // Set initial price based on the first variant
-    const initialOption = variantSelect.options[variantSelect.selectedIndex];
-    const initialPrice = parseFloat(initialOption.getAttribute('data-price'));
-    priceDisplay.textContent = formatCurrency(initialPrice);
+        const selectedOption = variantSelect.options[variantSelect.selectedIndex];
+        if (!selectedOption) {
+            console.error("No option selected in variant dropdown!");
+            return;
+        }
+
+        const price = parseFloat(selectedOption.getAttribute('data-price'));
+        const variantId = selectedOption.value;
+
+        if (priceDisplay) {
+            priceDisplay.textContent = formatCurrency(price);
+        }
+
+        // Update the hidden input with the selected variant ID
+        if (selectedVariantIdInput) {
+            selectedVariantIdInput.value = variantId;
+            console.log("Set selectedVariantIdInput.value to: " + variantId);
+        } else {
+            console.error("selectedVariantIdInput not found!");
+        }
+    }
+
+    if (variantSelect) {
+        variantSelect.addEventListener('change', updateVariantInfo);
+
+        // Set initial values based on the first variant
+        updateVariantInfo();
+
+        // Add a submit event listener to the form to ensure variantId is set
+        if (addToCartForm) {
+            addToCartForm.addEventListener('submit', function(event) {
+                // Update the variant ID one more time before submitting
+                updateVariantInfo();
+                console.log("Form submitted with variantId: " + selectedVariantIdInput.value);
+            });
+        }
+    } else {
+        console.error("Variant select element not found on page load!");
+    }
 });
