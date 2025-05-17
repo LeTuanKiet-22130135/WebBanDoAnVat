@@ -7,20 +7,31 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import dao.CartDAO;
-import model.Cart;
+import newdao.CartDAO;
+import newdao.UserDAO;
+import newmodel.Cart;
+import newmodel.User;
 
 @WebServlet("/RemoveFromCartServlet")
 public class RemoveFromCartServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final CartDAO cartDAO = new CartDAO();
+    private final UserDAO userDAO = new UserDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {   
 
-        String username = request.getUserPrincipal().getName();
+        // Get session and check if user is logged in
+        HttpSession session = request.getSession(false);
+        String username = (String) session.getAttribute("username");
+        if (username == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
         String productIdParam = request.getParameter("productId");
+        String variantIdParam = request.getParameter("variantId");
 
         if (productIdParam == null || productIdParam.isEmpty()) {
             response.sendRedirect("cart");
@@ -28,25 +39,38 @@ public class RemoveFromCartServlet extends HttpServlet {
         }
 
         try {
-            int productId = Integer.parseInt(productIdParam);
-            int cartId = cartDAO.getCartIdByUsername(username);
+            final int productId = Integer.parseInt(productIdParam);
+            // Get variant ID from request, default to 0 if not provided
+            final int variantId;
+            if (variantIdParam != null && !variantIdParam.isEmpty()) {
+                variantId = Integer.parseInt(variantIdParam);
+            } else {
+                variantId = 0;
+            }
 
+            User user = userDAO.getUserByUsername(username);
+            if (user == null) {
+                response.sendRedirect("cart");
+                return;
+            }
+
+            int cartId = cartDAO.getCartIdByUsername(username);
             if (cartId == -1) {
                 response.sendRedirect("cart");
                 return;
             }
 
             // Remove the item from the cart using CartDAO
-            cartDAO.removeItemFromCart(cartId, productId);
+            cartDAO.removeItemFromCart(cartId, productId, variantId);
 
             // Update the session cart (if present)
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                Cart cart = (Cart) session.getAttribute("cart");
-                if (cart != null) {
-                    cart.getItems().removeIf(item -> item.getProductId() == productId);
-                    session.setAttribute("cart", cart);
-                }
+            Cart cart = (Cart) session.getAttribute("cart");
+            if (cart != null && cart.getItems() != null) {
+                // Recalculate cart subtotal after removing item
+                cart.getItems().removeIf(item -> 
+                    item.getProductId() == productId && item.getVariantId() == variantId);
+                session.setAttribute("cart", cart);
+                session.setAttribute("cartSubtotal", cart.getSubtotal());
             }
 
         } catch (NumberFormatException | SQLException e) {

@@ -22,10 +22,10 @@ public class UserDAO {
      */
     public boolean checkUser(String username) {
         String query = "SELECT 1 FROM users WHERE username = ?";
-        
+
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            
+
             stmt.setString(1, username);
             try (ResultSet rs = stmt.executeQuery()) {
                 return rs.next(); // Returns true if a record is found
@@ -33,10 +33,10 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return false;
     }
-    
+
     /**
      * Checks if the provided password matches the stored hashed password for a user
      * 
@@ -46,10 +46,10 @@ public class UserDAO {
      */
     public boolean checkPassword(String username, String password) {
         String query = "SELECT hashed_password FROM users WHERE username = ?";
-        
+
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            
+
             stmt.setString(1, username);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -60,10 +60,10 @@ public class UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return false;
     }
-    
+
     /**
      * Gets a user by username
      * 
@@ -71,11 +71,11 @@ public class UserDAO {
      * @return The User object if found, null otherwise
      */
     public User getUserByUsername(String username) {
-        String query = "SELECT id, username, hashed_password, isAdmin FROM users WHERE username = ?";
-        
+        String query = "SELECT id, username, hashed_password, email, status FROM users WHERE username = ?";
+
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-            
+
             stmt.setString(1, username);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -83,14 +83,15 @@ public class UserDAO {
                     user.setId(rs.getInt("id"));
                     user.setUsername(rs.getString("username"));
                     user.setHashedPassword(rs.getString("hashed_password"));
-                    user.setAdmin(rs.getBoolean("isAdmin"));
+                    user.setEmail(rs.getString("email"));
+                    user.setStatus(rs.getInt("status"));
                     return user;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return null;
     }
 }

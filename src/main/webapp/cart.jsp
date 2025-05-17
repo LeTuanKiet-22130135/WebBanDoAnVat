@@ -26,7 +26,7 @@
 							<td class="align-middle"><img src="${item.productImageUrl}"
 								alt="${item.productName}" style="width: 50px;">
 								${item.productName}</td>
-							<td class="align-middle">$${item.productPrice}</td>
+							<td class="align-middle">$${item.price}</td>
 							<td class="align-middle">
 								<!-- Quantity update form -->
 								<form method="post" action="UpdateCartServlet">
@@ -49,6 +49,7 @@
 										</div>
 									</div>
 									<input type="hidden" name="productId" value="${item.productId}">
+									<input type="hidden" name="variantId" value="${item.variantId}">
 								</form>
 							</td>
 							<td class="align-middle">$${item.totalPrice}</td>
@@ -56,6 +57,7 @@
 								<!-- Remove item button -->
 								<form method="get" action="RemoveFromCartServlet">
 									<input type="hidden" name="productId" value="${item.productId}">
+									<input type="hidden" name="variantId" value="${item.variantId}">
 									<button type="submit" class="btn btn-sm btn-danger">
 										<i class="fa fa-times"></i>
 									</button>
