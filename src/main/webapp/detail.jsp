@@ -45,20 +45,25 @@
                     </select>
                 </div>
 
-                <div class="d-flex align-items-center mb-4 pt-2">
-                    <div class="input-group quantity mr-3" style="width: 130px;">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-minus"><i class="fa fa-minus"></i></button>
+                <form action="cart" method="post" id="add-to-cart-form">
+                    <div class="d-flex align-items-center mb-4 pt-2">
+                        <div class="input-group quantity mr-3" style="width: 130px;">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-primary btn-minus"><i class="fa fa-minus"></i></button>
+                            </div>
+                            <input type="text" name="quantity" class="form-control bg-secondary border-0 text-center" value="1">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-primary btn-plus"><i class="fa fa-plus"></i></button>
+                            </div>
                         </div>
-                        <input type="text" class="form-control bg-secondary border-0 text-center" value="1">
-                        <div class="input-group-btn">
-                            <button class="btn btn-primary btn-plus"><i class="fa fa-plus"></i></button>
-                        </div>
+                        <button type="submit" class="btn btn-primary px-3">
+                            <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
+                        </button>
+                        <input type="hidden" name="productId" value="${product.id}">
+                        <input type="hidden" name="action" value="add">
+                        <input type="hidden" name="variantId" id="selected-variant-id" value="${product.variants[0].id}">
                     </div>
-                    <button class="btn btn-primary px-3">
-                        <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
-                    </button>
-                </div>
+                </form>
                 <div class="d-flex pt-2">
                     <strong class="text-dark mr-2">Share on:</strong>
                     <div class="d-inline-flex">
@@ -135,5 +140,3 @@
 
 <script src="js/variant-selection.js" defer></script>
 <%@ include file="WEB-INF/footer.jsp" %>
-
-

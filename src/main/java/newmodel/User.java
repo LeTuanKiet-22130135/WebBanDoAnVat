@@ -4,17 +4,19 @@ public class User {
     private int id;
     private String username;
     private String hashedPassword;
-    private boolean isAdmin;
+    private String email;
+    private int status;
 
     // Constructors
     public User() {
     }
 
-    public User(int id, String username, String hashedPassword, boolean isAdmin) {
+    public User(int id, String username, String hashedPassword, String email, int status) {
         this.id = id;
         this.username = username;
         this.hashedPassword = hashedPassword;
-        this.isAdmin = isAdmin;
+        this.email = email;
+        this.status = status;
     }
 
     // Getters and Setters
@@ -42,12 +44,26 @@ public class User {
         this.hashedPassword = hashedPassword;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    // Convenience method to check if user is admin (for backward compatibility)
+    public boolean isAdmin() {
+        // Assuming status value 1 represents admin
+        return status == 1;
     }
 
     @Override
@@ -55,7 +71,8 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", isAdmin=" + isAdmin +
+                ", email='" + email + '\'' +
+                ", status=" + status +
                 '}';
     }
 }
