@@ -28,7 +28,7 @@
                 <h5 class="section-title position-relative text-uppercase mb-3">
                     <span class="bg-secondary pr-3">Profile Information</span>
                 </h5>
-                <form action="profile" method="post" onsubmit="return validateForm()">
+                <form action="profile" method="post" >
                     <div class="row">
                         <div class="col-md-6 form-group">
                             <label>First Name</label>
