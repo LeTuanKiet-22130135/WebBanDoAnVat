@@ -6,6 +6,7 @@ import util.PasswordUtil;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import newdao.DBConnection;
 
 public class UserDAO {
 
