@@ -3,22 +3,32 @@ package util;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class EmailUtil {
 
     private static final String SMTP_HOST = "smtp.gmail.com";
     private static final String SMTP_PORT = "587";
-    private static final String USERNAME = null;
-    private static final String PASSWORD = null;
+    private static String USERNAME;
+    private static String PASSWORD;
 
     public static void sendVerificationEmail(String recipientEmail, String verificationCode) {
         // Set up email properties
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", SMTP_HOST);
-        props.put("mail.smtp.port", SMTP_PORT);
+        try (InputStream input = EmailUtil.class.getClassLoader().getResourceAsStream("mail.properties")) {
+            if (input == null) {
+                System.out.println("Sorry, unable to find mail.properties");
+                return;
+            }
+            props.load(input);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        USERNAME = props.getProperty("mail.username");
+        PASSWORD = props.getProperty("mail.password");
 
         // Create a session with authentication
         Session session = Session.getInstance(props, new Authenticator() {

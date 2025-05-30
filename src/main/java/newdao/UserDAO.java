@@ -254,4 +254,69 @@ public class UserDAO {
 
         return false;
     }
+
+    /**
+     * Adds a new user with a profile
+     * 
+     * @param username The username of the new user
+     * @param hashedPassword The hashed password of the new user
+     * @param firstName The first name for the user's profile
+     * @param lastName The last name for the user's profile
+     * @param email The email for the user's profile
+     */
+    public void addUserWithProfile(String username, String hashedPassword, String firstName, String lastName, String email) {
+        String userQuery = "INSERT INTO users (username, hashed_password, email, status) VALUES (?, ?, ?, ?)";
+        String profileQuery = "INSERT INTO userprofile (user_id, first_name, last_name, email) VALUES (?, ?, ?, ?)";
+
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false); // Begin transaction
+
+            // Insert user with hashed password
+            try (PreparedStatement userStmt = conn.prepareStatement(userQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                userStmt.setString(1, username);
+                userStmt.setString(2, hashedPassword);
+                userStmt.setString(3, email);
+                userStmt.setInt(4, 1); // Active status
+                userStmt.executeUpdate();
+
+                // Get generated user ID
+                try (ResultSet rs = userStmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int userId = rs.getInt(1);
+
+                        // Insert profile
+                        try (PreparedStatement profileStmt = conn.prepareStatement(profileQuery)) {
+                            profileStmt.setInt(1, userId);
+                            profileStmt.setString(2, firstName);
+                            profileStmt.setString(3, lastName);
+                            profileStmt.setString(4, email);
+                            profileStmt.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            conn.commit(); // Commit transaction
+        } catch (SQLException e) {
+            e.printStackTrace();
+            if (conn != null) {
+                try {
+                    conn.rollback(); // Rollback transaction on error
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }

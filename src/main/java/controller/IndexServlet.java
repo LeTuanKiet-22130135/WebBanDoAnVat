@@ -23,9 +23,11 @@ public class IndexServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		List<Product> products = dao.getAllProducts();
+		List<Product> allProducts = dao.getAllProducts();
+		// Limit to 8 products for display on index page
+		List<Product> limitedProducts = allProducts.size() > 8 ? allProducts.subList(0, 8) : allProducts;
 		HttpSession s = req.getSession(true);
-		s.setAttribute("products", products);
+		s.setAttribute("products", limitedProducts);
 		RequestDispatcher dispatcher = req.getRequestDispatcher("index.jsp");
 		dispatcher.forward(req, resp);
 	}

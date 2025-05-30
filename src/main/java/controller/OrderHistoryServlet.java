@@ -3,14 +3,15 @@ package controller;
 import java.io.IOException;
 import java.util.List;
 
-import dao.OrderDAO;
+import newdao.OrderDAO;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Order;
+import jakarta.servlet.http.HttpSession;
+import newmodel.Order;
 
 @WebServlet("/orderhistory")
 public class OrderHistoryServlet extends HttpServlet {
@@ -22,12 +23,14 @@ public class OrderHistoryServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        if (request.getUserPrincipal() == null) {
+        HttpSession session = request.getSession();
+        String username = (String) session.getAttribute("username");
+
+        if (username == null) {
             response.sendRedirect("login.jsp");
             return;
         }
 
-        String username = request.getUserPrincipal().getName();
         int userId = orderDAO.getUserIdByUsername(username);
 
         List<Order> orders = orderDAO.getOrdersByUserId(userId);

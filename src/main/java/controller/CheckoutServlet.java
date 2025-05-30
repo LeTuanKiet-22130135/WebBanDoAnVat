@@ -4,17 +4,17 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
-import dao.CartDAO;
-import dao.OrderDAO;
-import dao.UserDAO;
+import newdao.CartDAO;
+import newdao.OrderDAO;
+import newdao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Cart;
-import model.CartItem;
+import newmodel.Cart;
+import newmodel.CartItem;
 
 @WebServlet("/checkout")
 public class CheckoutServlet extends HttpServlet {
@@ -28,9 +28,9 @@ public class CheckoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     	HttpSession session = request.getSession(false);
-    	
+
         // Ensure the user is logged in
-        if (request.getUserPrincipal() == null) {
+        if (session.getAttribute("username") == null) {
             response.sendRedirect("login.jsp");
             return;
         }
@@ -45,14 +45,14 @@ public class CheckoutServlet extends HttpServlet {
 
         request.getRequestDispatcher("checkout.jsp").forward(request, response);
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        
+
         // Retrieve user ID and cart
-        String username = req.getUserPrincipal().getName();
-        int userId = userDAO.getUserIdByUsername(username);
+        String username = (String) session.getAttribute("username");
+        int userId = orderDAO.getUserIdByUsername(username);
         Cart cart = (Cart) session.getAttribute("cart");
         List<CartItem> cartItems = cart.getItems();
         BigDecimal totalAmount = cart.getSubtotal().add((BigDecimal) session.getAttribute("shippingCost"));
@@ -61,6 +61,9 @@ public class CheckoutServlet extends HttpServlet {
         int orderId = orderDAO.createOrder(userId, totalAmount, cartItems);
 
         if (orderId > 0) {
+            // Add shipping information
+            int shippingId = orderDAO.addShipping(orderId, 0, 0); // 0 = placed, 0 = not yet paid
+
             // Clear the cart
             cartDAO.clearCart(cart.getId());
 
