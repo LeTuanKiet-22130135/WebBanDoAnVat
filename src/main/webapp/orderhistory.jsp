@@ -45,7 +45,7 @@
 									<tr>
 										<td>${order.id}</td>
 										<td>${order.orderDate}</td>
-										<td>${order.totalAmount}đ</td>
+										<td>${order.total}đ</td>
 										<td>
 											<button type="button" class="btn btn-info"
 												data-toggle="collapse" data-target="#details${order.id}">
@@ -58,16 +58,18 @@
 											<table class="table table-striped">
 												<thead>
 													<tr>
-														<th>Product Name</th>
+														<th>Product</th>
+														<th>Variant</th>
 														<th>Quantity</th>
 														<th>Price</th>
 														<th>Total</th>
 													</tr>
 												</thead>
 												<tbody>
-													<c:forEach var="item" items="${order.items}">
+													<c:forEach var="item" items="${order.orderDetails}">
 														<tr>
 															<td>${item.productName}</td>
+															<td>${item.variantName}</td>
 															<td>${item.quantity}</td>
 															<td>${item.price}đ</td>
 															<td>${item.totalPrice}đ</td>

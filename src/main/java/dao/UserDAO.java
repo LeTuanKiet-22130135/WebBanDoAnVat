@@ -107,7 +107,7 @@ public class UserDAO {
 	}
 
 	public void addUserWithProfile(String username, String hashedPassword, String firstName, String lastName, String email) {
-		String userQuery = "INSERT INTO user (username, password, isAdmin) VALUES (?, ?, ?)";
+		String userQuery = "INSERT INTO users (username, password, isAdmin) VALUES (?, ?, ?)";
 		String profileQuery = "INSERT INTO userprofile (user_id, first_name, last_name, email) VALUES (?, ?, ?, ?)";
 
 		try {
