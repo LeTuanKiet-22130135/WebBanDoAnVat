@@ -48,6 +48,15 @@ public class CartServlet extends HttpServlet {
             session.setAttribute("cart", cart);
             session.setAttribute("cartSubtotal", cart.getSubtotal());
             session.setAttribute("shippingCost", new BigDecimal("5.00"));
+
+            // Calculate total items count and store in session
+            int totalItems = 0;
+            if (cart.getItems() != null) {
+                for (CartItem item : cart.getItems()) {
+                    totalItems += item.getQuantity();
+                }
+            }
+            session.setAttribute("cartItemCount", totalItems);
             request.getRequestDispatcher("cart.jsp").forward(request, response);
 
         } catch (SQLException e) {
@@ -115,6 +124,21 @@ public class CartServlet extends HttpServlet {
                     // Since addOrUpdateCartItem already added 1
                     cartDAO.updateCartItemQuantity(cartId, productId, variantId, quantity - 1);
                 }
+
+                // Get updated cart and set in session
+                Cart cart = cartDAO.getCartByUserId(userId);
+                session.setAttribute("cart", cart);
+                session.setAttribute("cartSubtotal", cart.getSubtotal());
+
+                // Calculate total items count and store in session
+                int totalItems = 0;
+                if (cart.getItems() != null) {
+                    for (CartItem item : cart.getItems()) {
+                        totalItems += item.getQuantity();
+                    }
+                }
+                session.setAttribute("cartItemCount", totalItems);
+
             } catch (SQLException e) {
                 e.printStackTrace();
                 throw new ServletException("Database error while adding product to cart");

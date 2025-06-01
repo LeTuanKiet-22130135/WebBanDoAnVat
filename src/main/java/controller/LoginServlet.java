@@ -9,7 +9,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import newdao.CartDAO;
 import newdao.UserDAO;
+import newmodel.Cart;
+import newmodel.CartItem;
 
 @WebServlet(urlPatterns = "/login")
 public class LoginServlet extends HttpServlet {
@@ -18,6 +21,7 @@ public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private final UserDAO userDAO = new UserDAO();
+	private final CartDAO cartDAO = new CartDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -53,6 +57,23 @@ public class LoginServlet extends HttpServlet {
 		// Authentication successful, create session
 		HttpSession session = req.getSession();
 		session.setAttribute("username", username);
+
+		// Get user ID
+		int userId = userDAO.getUserIdByUsername(username);
+
+		// Get user's cart and calculate total items
+		Cart cart = cartDAO.getCartByUserId(userId);
+		session.setAttribute("cart", cart);
+		session.setAttribute("cartSubtotal", cart.getSubtotal());
+
+		// Calculate total items count and store in session
+		int totalItems = 0;
+		if (cart.getItems() != null) {
+			for (CartItem item : cart.getItems()) {
+				totalItems += item.getQuantity();
+			}
+		}
+		session.setAttribute("cartItemCount", totalItems);
 
 		// Redirect to index page
 		resp.sendRedirect("index");
