@@ -3,7 +3,7 @@ package controller;
 import util.PasswordUtil;
 import util.CodeGenerator;
 import util.EmailUtil;
-import dao.UserDAO;
+import newdao.UserDAO;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
@@ -41,7 +41,7 @@ public class SignupServlet extends HttpServlet {
             }
 
             // Check if username already exists
-            if (userDAO.isUsernameTaken(username)) {
+            if (userDAO.checkUser(username)) {
                 request.setAttribute("errorMessage", "Username already exists. Please choose another one.");
                 request.getRequestDispatcher("signup.jsp").forward(request, response);
                 return;

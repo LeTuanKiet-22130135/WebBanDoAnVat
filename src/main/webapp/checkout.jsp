@@ -23,7 +23,7 @@
                             <c:forEach var="item" items="${cart.items}">
                                 <tr>
                                     <td>${item.productName}</td>
-                                    <td>${item.productPrice} đ</td>
+                                    <td>${item.price} đ</td>
                                     <td>${item.quantity}</td>
                                     <td>${item.totalPrice} đ</td>
                                 </tr>

@@ -1,6 +1,6 @@
 package controller;
 
-import dao.UserDAO;
+import newdao.UserDAO;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;
