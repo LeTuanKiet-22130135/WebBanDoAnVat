@@ -45,11 +45,34 @@ function initProductDetailPage() {
     // Handle Add to Cart button click
     $('#add-to-cart-btn').click(function() {
         const productId = $('#product-id').val();
-        const variantId = $('#selected-variant-id').val();
+        let variantId = $('#selected-variant-id').val();
         const quantity = $('#quantity').val();
 
-        // Call the addToCart function
-        addToCart(productId, variantId, quantity);
+        // Check if variantId is valid (not null, undefined, empty, or 0)
+        if (!variantId || variantId === '0' || variantId === 0) {
+            // Get the first variant ID for the product
+            $.ajax({
+                url: 'getFirstVariant',
+                type: 'GET',
+                data: {
+                    productId: productId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Call the addToCart function with the first variant ID
+                        addToCart(productId, response.variantId, quantity);
+                    } else {
+                        console.error('Error: ' + response.message);
+                    }
+                },
+                error: function() {
+                    console.error('An error occurred while getting the variant ID.');
+                }
+            });
+        } else {
+            // Call the addToCart function with the selected variant ID
+            addToCart(productId, variantId, quantity);
+        }
     });
 
     // Handle quantity buttons
@@ -72,11 +95,27 @@ function initProductListingPage() {
     // This works for both static and dynamically loaded content
     $(document).on('click', '.add-to-cart-btn', function() {
         const productId = $(this).data('product-id');
-        const variantId = 0; // Default to 0 for no variant
         const quantity = 1; // Default to 1
 
-        // Call the addToCart function
-        addToCart(productId, variantId, quantity);
+        // Get the first variant ID for the product
+        $.ajax({
+            url: 'getFirstVariant',
+            type: 'GET',
+            data: {
+                productId: productId
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Call the addToCart function with the first variant ID
+                    addToCart(productId, response.variantId, quantity);
+                } else {
+                    console.error('Error: ' + response.message);
+                }
+            },
+            error: function() {
+                console.error('An error occurred while getting the variant ID.');
+            }
+        });
     });
 }
 
