@@ -82,14 +82,14 @@
 				<img class="img-fluid" src="img/offer-1.jpg" alt="">
 				<div class="offer-text">
 					<h3 class="text-white mb-3"><fmt:message key="carousel.specialOffer" /></h3>
-					<a href="shop" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
+					<a href="shop.jsp" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
 				</div>
 			</div>
 			<div class="product-offer mb-30" style="height: 200px;">
 				<img class="img-fluid" src="img/offer-2.jpg" alt="">
 				<div class="offer-text">
 					<h3 class="text-white mb-3"><fmt:message key="carousel.specialOffer" /></h3>
-					<a href="shop" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
+					<a href="shop.jsp" class="btn btn-primary"><fmt:message key="button.shopNow" /></a>
 				</div>
 			</div>
 		</div>
