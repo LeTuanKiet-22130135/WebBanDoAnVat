@@ -24,10 +24,13 @@
                     <a href="signup" class="btn btn-secondary"><fmt:message key="button.signup" /></a>
                 </div>
 
-                <div class="mt-3 text-center">
+                <div class="mt-3 text-center btn-group-vertical d-flex justify-content-center align-items-center">
                     <p>OR</p>
-                    <a href="oauth/google" class="btn btn-danger">
+                    <a href="oauth/google" class="btn btn-danger mb-2">
                         <i class="fab fa-google mr-2"></i> Login with Google
+                    </a>
+                    <a href="oauth/facebook" class="btn" style="background-color: #4267B2; color: white;">
+                        <i class="fab fa-facebook-f mr-2"></i> Login with Facebook
                     </a>
                 </div>
                 <c:if test="${loginLocked}">
