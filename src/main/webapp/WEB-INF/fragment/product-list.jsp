@@ -21,12 +21,26 @@
                     <h6 class="text-muted ml-2"><del>$${product.price}</del></h6>
                 </div>
                 <div class="d-flex align-items-center justify-content-center mb-1">
-                    <small class="fa fa-star text-primary mr-1"></small>
-                    <small class="fa fa-star text-primary mr-1"></small>
-                    <small class="fa fa-star text-primary mr-1"></small>
-                    <small class="fa fa-star text-primary mr-1"></small>
-                    <small class="fa fa-star-half-alt text-primary mr-1"></small>
-                    <small>(99)</small>
+                    <c:set var="rating" value="${productRatings[product.id] != null ? productRatings[product.id] : 0}" />
+                    <c:set var="reviewCount" value="${productReviewCounts[product.id] != null ? productReviewCounts[product.id] : 0}" />
+
+                    <c:set var="integerPart" value="${rating - (rating % 1)}" />
+                    <c:set var="decimalPart" value="${rating % 1}" />
+
+                    <c:forEach begin="1" end="5" var="i">
+                        <c:choose>
+                            <c:when test="${i <= integerPart}">
+                                <small class="fas fa-star text-primary mr-1"></small>
+                            </c:when>
+                            <c:when test="${i == integerPart + 1 && decimalPart >= 0.5}">
+                                <small class="fas fa-star-half-alt text-primary mr-1"></small>
+                            </c:when>
+                            <c:otherwise>
+                                <small class="far fa-star text-primary mr-1"></small>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                    <small>(${reviewCount})</small>
                 </div>
             </div>
         </div>

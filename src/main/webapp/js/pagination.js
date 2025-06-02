@@ -101,6 +101,9 @@ function loadProductsPage(page) {
         // Reinitialize pagination to attach event listeners to the new pagination elements
         initPagination();
 
+        // Reinitialize price filter to attach event listeners to the checkboxes
+        initPriceFilter();
+
         // Update pagination UI
         updatePaginationUI(page);
     })
