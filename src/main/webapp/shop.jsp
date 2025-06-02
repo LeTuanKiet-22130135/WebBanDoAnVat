@@ -62,7 +62,6 @@
 </div>
 
 <%@ include file="WEB-INF/footer.jsp" %>
-<script src="${pageContext.request.contextPath}/js/filter.js"></script>
 <script src="${pageContext.request.contextPath}/js/pagination.js"></script>
 
 <script>
