@@ -20,11 +20,56 @@
                     <input type="password" name="password" id="password" class="form-control" required>
                 </div>
                 <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary"><fmt:message key="button.login" /></button>
+                    <button type="submit" id="loginButton" class="btn btn-primary"><fmt:message key="button.login" /></button>
                     <a href="signup" class="btn btn-secondary"><fmt:message key="button.signup" /></a>
                 </div>
+                <c:if test="${loginLocked}">
+                    <div class="mt-2 text-danger">
+                        <span id="lockoutMessage">Login temporarily disabled. Please wait <span id="countdown"></span> seconds.</span>
+                    </div>
+                </c:if>
             </form>
         </div>
     </div>
+
+<script>
+    // Check if login is locked
+    const isLocked = ${loginLocked != null ? loginLocked : false};
+    const lockUntil = ${lockUntil != null ? lockUntil : 0};
+    const loginButton = document.getElementById('loginButton');
+    const countdownElement = document.getElementById('countdown');
+
+    function updateLoginButton() {
+        if (isLocked && lockUntil > Date.now()) {
+            // Disable login button
+            loginButton.disabled = true;
+
+            // Calculate remaining time
+            const remainingSeconds = Math.ceil((lockUntil - Date.now()) / 1000);
+
+            // Update countdown
+            if (countdownElement) {
+                countdownElement.textContent = remainingSeconds;
+            }
+
+            // Check again in 1 second
+            setTimeout(updateLoginButton, 1000);
+        } else if (isLocked) {
+            // Time's up, enable the button
+            loginButton.disabled = false;
+
+            // Hide the lockout message if it exists
+            const lockoutMessage = document.getElementById('lockoutMessage');
+            if (lockoutMessage) {
+                lockoutMessage.style.display = 'none';
+            }
+        }
+    }
+
+    // Initialize the button state
+    if (isLocked) {
+        updateLoginButton();
+    }
+</script>
 
 <%@ include file="WEB-INF/footer.jsp"%>

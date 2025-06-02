@@ -3,6 +3,7 @@
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
 <%@ include file="WEB-INF/header.jsp"%>
 
+
 <div class="container-fluid pb-5">
     <div class="row px-xl-5">
         <!-- Product Image Section -->
@@ -45,25 +46,23 @@
                     </select>
                 </div>
 
-                <form action="cart" method="post" id="add-to-cart-form">
-                    <div class="d-flex align-items-center mb-4 pt-2">
-                        <div class="input-group quantity mr-3" style="width: 130px;">
-                            <div class="input-group-btn">
-                                <button type="button" class="btn btn-primary btn-minus"><i class="fa fa-minus"></i></button>
-                            </div>
-                            <input type="text" name="quantity" class="form-control bg-secondary border-0 text-center" value="1">
-                            <div class="input-group-btn">
-                                <button type="button" class="btn btn-primary btn-plus"><i class="fa fa-plus"></i></button>
-                            </div>
+                <div class="d-flex align-items-center mb-4 pt-2">
+                    <div class="input-group quantity mr-3" style="width: 130px;">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-primary btn-minus"><i class="fa fa-minus"></i></button>
                         </div>
-                        <button type="submit" class="btn btn-primary px-3">
-                            <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
-                        </button>
-                        <input type="hidden" name="productId" value="${product.id}">
-                        <input type="hidden" name="action" value="add">
-                        <input type="hidden" name="variantId" id="selected-variant-id" value="${product.variants[0].id}">
+                        <input type="text" id="quantity" class="form-control bg-secondary border-0 text-center" value="1">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-primary btn-plus"><i class="fa fa-plus"></i></button>
+                        </div>
                     </div>
-                </form>
+                    <button type="button" id="add-to-cart-btn" class="btn btn-primary px-3">
+                        <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
+                    </button>
+                    <input type="hidden" id="product-id" value="${product.id}">
+                    <input type="hidden" id="selected-variant-id" value="${product.variants[0].id}">
+                </div>
+
                 <div class="d-flex pt-2">
                     <strong class="text-dark mr-2">Share on:</strong>
                     <div class="d-inline-flex">
@@ -138,5 +137,17 @@
 
 </div>
 
-<script src="js/variant-selection.js" defer></script>
+<!-- Include jQuery if not already included in header -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/variant-selection.js" defer></script>
+<!-- Include custom cart JavaScript -->
+<script src="${pageContext.request.contextPath}/js/cart.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Initialize product detail page functionality
+        initProductDetailPage();
+    });
+</script>
+
 <%@ include file="WEB-INF/footer.jsp" %>

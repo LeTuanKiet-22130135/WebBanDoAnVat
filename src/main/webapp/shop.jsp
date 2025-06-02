@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
 <%@ include file="WEB-INF/header.jsp"%>
+<!-- Include jQuery if not already included in header -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include custom cart JavaScript -->
+<script src="${pageContext.request.contextPath}/js/cart.js"></script>
 
 <div class="container-fluid">
     <div class="row">
@@ -58,5 +62,12 @@
 </div>
 
 <%@ include file="WEB-INF/footer.jsp" %>
-<script src="js/filter.js"></script>
-<script src="js/pagination.js"></script>
+<script src="${pageContext.request.contextPath}/js/filter.js"></script>
+<script src="${pageContext.request.contextPath}/js/pagination.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Initialize product listing page functionality
+        initProductListingPage();
+    });
+</script>
