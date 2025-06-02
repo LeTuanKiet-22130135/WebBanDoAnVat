@@ -1,7 +1,87 @@
 ﻿/**
  * JavaScript for handling AJAX cart operations
  */
+
+// Global function to add product to cart via AJAX
+function addToCart(productId, variantId, quantity) {
+    $.ajax({
+        url: 'cart',
+        type: 'POST',
+        data: {
+            productId: productId,
+            variantId: variantId,
+            quantity: quantity,
+            action: 'add'
+        },
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function(response) {
+            if (response.success) {
+                // Update cart count in header
+                updateCartCount(response.cartItemCount);
+                // No success message popup as per requirement
+            } else {
+                console.error('Error: ' + response.message);
+            }
+        },
+        error: function() {
+            console.error('An error occurred while adding the product to cart.');
+        }
+    });
+}
+
+// Global function to update cart count in header
+function updateCartCount(count) {
+    // Update cart count in mobile view
+    $('.d-inline-flex.align-items-center.d-block.d-lg-none .fa-shopping-cart').next('span').text(count);
+
+    // Update cart count in desktop view
+    $('.d-flex.align-items-center .fa-shopping-cart').next('span').text(count);
+}
+
+// Function to initialize product detail page functionality
+function initProductDetailPage() {
+    // Handle Add to Cart button click
+    $('#add-to-cart-btn').click(function() {
+        const productId = $('#product-id').val();
+        const variantId = $('#selected-variant-id').val();
+        const quantity = $('#quantity').val();
+
+        // Call the addToCart function
+        addToCart(productId, variantId, quantity);
+    });
+
+    // Handle quantity buttons
+    $('.btn-plus').click(function() {
+        var quantity = parseInt($('#quantity').val());
+        $('#quantity').val(quantity + 1);
+    });
+
+    $('.btn-minus').click(function() {
+        var quantity = parseInt($('#quantity').val());
+        if (quantity > 1) {
+            $('#quantity').val(quantity - 1);
+        }
+    });
+}
+
+// Function to initialize product listing page functionality
+function initProductListingPage() {
+    // Handle Add to Cart button click using event delegation
+    // This works for both static and dynamically loaded content
+    $(document).on('click', '.add-to-cart-btn', function() {
+        const productId = $(this).data('product-id');
+        const variantId = 0; // Default to 0 for no variant
+        const quantity = 1; // Default to 1
+
+        // Call the addToCart function
+        addToCart(productId, variantId, quantity);
+    });
+}
+
 $(document).ready(function() {
+
     // Function to update cart items via AJAX
     function updateCartItem(productId, variantId, action) {
         $.ajax({
@@ -102,15 +182,6 @@ $(document).ready(function() {
         const subtotal = parseFloat(cartSubtotal);
         const total = subtotal + shippingCost;
         $('.col-lg-4 .pt-2 .d-flex h5:last-child').text(total + ' đ');
-    }
-
-    // Function to update cart count in header
-    function updateCartCount(count) {
-        // Update cart count in mobile view
-        $('.d-inline-flex.align-items-center.d-block.d-lg-none .fa-shopping-cart').next('span').text(count);
-
-        // Update cart count in desktop view
-        $('.d-flex.align-items-center .fa-shopping-cart').next('span').text(count);
     }
 
     // Initial attachment of event handlers

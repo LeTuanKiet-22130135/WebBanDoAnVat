@@ -4,6 +4,10 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
 <%@ include file="WEB-INF/header.jsp"%>
+<!-- Include jQuery if not already included in header -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Include custom cart JavaScript -->
+<script src="${pageContext.request.contextPath}/js/cart.js"></script>
 
 <!-- Carousel Start -->
 <div class="container-fluid mb-3">
@@ -140,7 +144,7 @@
                     <div class="product-img position-relative overflow-hidden">
                         <img class="img-fluid w-100" src="${product.img}" alt="${product.name}">
                         <div class="product-action">
-                            <a class="btn btn-outline-dark btn-square" href="#"><i class="fa fa-shopping-cart"></i></a>
+                            <a class="btn btn-outline-dark btn-square add-to-cart-btn" href="javascript:void(0)" data-product-id="${product.id}"><i class="fa fa-shopping-cart"></i></a>
                             <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a>
                             <a class="btn btn-outline-dark btn-square" href="#"><i class="fa fa-sync-alt"></i></a>
                             <a class="btn btn-outline-dark btn-square" href="detail?id=${product.id}"><i class="fa fa-search"></i></a>
@@ -159,5 +163,11 @@
 </div>
 <!-- Products End -->
 
+<script>
+    $(document).ready(function() {
+        // Initialize product listing page functionality
+        initProductListingPage();
+    });
+</script>
 
 <%@ include file="WEB-INF/footer.jsp"%>

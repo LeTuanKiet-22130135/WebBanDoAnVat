@@ -65,6 +65,20 @@ public class CartServlet extends HttpServlet {
         }
     }
 
+    // Helper method to check if request is an AJAX request
+    private boolean isAjaxRequest(HttpServletRequest request) {
+        return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+    }
+
+    // Helper method to send JSON response
+    private void sendJsonResponse(HttpServletResponse response, boolean success, String message, int cartItemCount, BigDecimal cartSubtotal) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print("{\"success\":" + success + ",\"message\":\"" + message + "\",\"cartItemCount\":" + cartItemCount + ",\"cartSubtotal\":\"" + cartSubtotal + "\"}");
+        out.flush();
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -73,13 +87,21 @@ public class CartServlet extends HttpServlet {
         String username = (String) session.getAttribute("username");
         if (username == null) {
             System.out.println("No username in session");
-            response.sendRedirect("login");
+            if (isAjaxRequest(request)) {
+                sendJsonResponse(response, false, "User not logged in", 0, BigDecimal.ZERO);
+            } else {
+                response.sendRedirect("login");
+            }
             return;
         }
         User user = userDAO.getUserByUsername(username);
         if (user == null) {
-        	System.out.println("User not found");
-            response.sendRedirect("login");
+            System.out.println("User not found");
+            if (isAjaxRequest(request)) {
+                sendJsonResponse(response, false, "User not found", 0, BigDecimal.ZERO);
+            } else {
+                response.sendRedirect("login");
+            }
             return;
         }
         int userId = user.getId();
@@ -141,10 +163,34 @@ public class CartServlet extends HttpServlet {
 
             } catch (SQLException e) {
                 e.printStackTrace();
-                throw new ServletException("Database error while adding product to cart");
+                if (isAjaxRequest(request)) {
+                    sendJsonResponse(response, false, "Database error while adding product to cart", 0, BigDecimal.ZERO);
+                } else {
+                    throw new ServletException("Database error while adding product to cart");
+                }
+                return;
+            }
+
+            // If it's an AJAX request, send a JSON response
+            if (isAjaxRequest(request)) {
+                int totalItems = 0;
+                BigDecimal cartSubtotal = BigDecimal.ZERO;
+
+                // Get values from session
+                if (session.getAttribute("cartItemCount") != null) {
+                    totalItems = (int) session.getAttribute("cartItemCount");
+                }
+
+                if (session.getAttribute("cartSubtotal") != null) {
+                    cartSubtotal = (BigDecimal) session.getAttribute("cartSubtotal");
+                }
+
+                sendJsonResponse(response, true, "Product added to cart successfully", totalItems, cartSubtotal);
+                return;
             }
         }
 
+        // Only redirect if not an AJAX request
         response.sendRedirect("cart");
     }
 }
