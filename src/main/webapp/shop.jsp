@@ -47,6 +47,26 @@
                     </div>
                 </form>
             </div>
+
+            <!-- Product Type Filter -->
+            <h5 class="section-title position-relative text-uppercase mb-3">
+                <span class="bg-secondary pr-3"><fmt:message key="shop.filterByType"/></span>
+            </h5>
+            <div class="bg-light p-4 mb-30">
+                <form id="type-filter-form">
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" name="typeId" value="all" id="type-all">
+                        <label class="custom-control-label" for="type-all"><fmt:message key="shop.allTypes"/></label>
+                    </div>
+                    <c:forEach var="type" items="${types}">
+                        <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                            <input type="checkbox" class="custom-control-input" name="typeId" value="${type.id}" id="type-${type.id}" 
+                                   <c:if test="${not empty typeIds and fn:contains(typeIds, type.id)}">checked</c:if>>
+                            <label class="custom-control-label" for="type-${type.id}">${type.name}</label>
+                        </div>
+                    </c:forEach>
+                </form>
+            </div>
         </div>
         <!-- Filter Sidebar End -->
 
