@@ -1,6 +1,7 @@
 package controller;
 
 import newdao.ProductDAO;
+import newdao.ReviewDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,7 +11,9 @@ import newmodel.Product;
 
 import java.io.IOException;
 import java.io.Serial;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/shop")
 public class ShopServlet extends HttpServlet {
@@ -18,6 +21,7 @@ public class ShopServlet extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
     private final ProductDAO productDAO = new ProductDAO();
+    private final ReviewDAO reviewDAO = new ReviewDAO();
     private static final int PRODUCTS_PER_PAGE = 9;
 
     @Override
@@ -46,12 +50,27 @@ public class ShopServlet extends HttpServlet {
         int totalProducts = productDAO.getTotalProductCount(queryParam, priceRanges);
         int totalPages = (int) Math.ceil((double) totalProducts / PRODUCTS_PER_PAGE);
 
+        // Get ratings for each product
+        Map<Integer, Double> productRatings = new HashMap<>();
+        Map<Integer, Integer> productReviewCounts = new HashMap<>();
+
+        for (Product product : products) {
+            int productId = product.getId();
+            double averageRating = reviewDAO.getAverageRatingByProductId(productId);
+            int reviewCount = reviewDAO.getReviewCountByProductId(productId);
+
+            productRatings.put(productId, averageRating);
+            productReviewCounts.put(productId, reviewCount);
+        }
+
         // Set attributes for the view
         req.setAttribute("products", products);
         req.setAttribute("currentPage", page + 1); // Convert back to 1-based for display
         req.setAttribute("totalPages", totalPages);
         req.setAttribute("query", queryParam);
         req.setAttribute("priceRanges", priceRanges);
+        req.setAttribute("productRatings", productRatings);
+        req.setAttribute("productReviewCounts", productReviewCounts);
 
         String ajax = req.getHeader("X-Requested-With");
         if ("XMLHttpRequest".equals(ajax)) {
