@@ -2,12 +2,14 @@ package controller;
 
 import newdao.ProductDAO;
 import newdao.ReviewDAO;
+import newdao.TypeDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import newmodel.Product;
+import newmodel.Type;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -22,12 +24,14 @@ public class ShopServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final ProductDAO productDAO = new ProductDAO();
     private final ReviewDAO reviewDAO = new ReviewDAO();
+    private final TypeDAO typeDAO = new TypeDAO();
     private static final int PRODUCTS_PER_PAGE = 9;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String queryParam = req.getParameter("query");
         String[] priceRanges = req.getParameterValues("priceRange");
+        String[] typeIds = req.getParameterValues("typeId");
 
         // Get pagination parameters
         int page = 0;
@@ -42,12 +46,15 @@ public class ShopServlet extends HttpServlet {
             page = 0;
         }
 
+        // Get all product types for the filter
+        List<Type> types = typeDAO.getAllTypes();
+
         // Get products for current page
         List<Product> products = productDAO.getProductsByCriteriaWithPagination(
-            queryParam, priceRanges, page, PRODUCTS_PER_PAGE);
+            queryParam, priceRanges, typeIds, page, PRODUCTS_PER_PAGE);
 
         // Get total count for pagination
-        int totalProducts = productDAO.getTotalProductCount(queryParam, priceRanges);
+        int totalProducts = productDAO.getTotalProductCount(queryParam, priceRanges, typeIds);
         int totalPages = (int) Math.ceil((double) totalProducts / PRODUCTS_PER_PAGE);
 
         // Get ratings for each product
@@ -69,6 +76,8 @@ public class ShopServlet extends HttpServlet {
         req.setAttribute("totalPages", totalPages);
         req.setAttribute("query", queryParam);
         req.setAttribute("priceRanges", priceRanges);
+        req.setAttribute("typeIds", typeIds);
+        req.setAttribute("types", types);
         req.setAttribute("productRatings", productRatings);
         req.setAttribute("productReviewCounts", productReviewCounts);
 

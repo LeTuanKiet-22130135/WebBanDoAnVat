@@ -4,6 +4,9 @@
 
     // Initialize price filter functionality
     initPriceFilter();
+
+    // Initialize type filter functionality
+    initTypeFilter();
 });
 
 function initPagination() {
@@ -58,6 +61,35 @@ function initPriceFilter() {
     }
 }
 
+function initTypeFilter() {
+    // Get the type filter form
+    const typeFilterForm = document.getElementById('type-filter-form');
+
+    if (typeFilterForm) {
+        // Add change event listeners to all checkboxes
+        const checkboxes = typeFilterForm.querySelectorAll('input[type="checkbox"]');
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                // If "All Types" is checked, uncheck all other options
+                if (this.id === 'type-all' && this.checked) {
+                    checkboxes.forEach(function(cb) {
+                        if (cb.id !== 'type-all') {
+                            cb.checked = false;
+                        }
+                    });
+                } else if (this.checked) {
+                    // If any other option is checked, uncheck "All Types"
+                    document.getElementById('type-all').checked = false;
+                }
+
+                // Load the first page with the selected type filters
+                loadProductsPage(1);
+            });
+        });
+    }
+}
+
 function loadProductsPage(page) {
     // Show loading indicator
     const productContainer = document.getElementById('product-container');
@@ -82,6 +114,15 @@ function loadProductsPage(page) {
         });
     }
 
+    // Add type filters
+    const typeFilterForm = document.getElementById('type-filter-form');
+    if (typeFilterForm) {
+        const checkedBoxes = typeFilterForm.querySelectorAll('input[type="checkbox"]:checked');
+        checkedBoxes.forEach(function(checkbox) {
+            params.append('typeId', checkbox.value);
+        });
+    }
+
     // Make AJAX request
     fetch('shop?' + params.toString(), {
         method: 'GET',
@@ -103,6 +144,9 @@ function loadProductsPage(page) {
 
         // Reinitialize price filter to attach event listeners to the checkboxes
         initPriceFilter();
+
+        // Reinitialize type filter to attach event listeners to the checkboxes
+        initTypeFilter();
 
         // Update pagination UI
         updatePaginationUI(page);

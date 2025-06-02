@@ -94,11 +94,11 @@ public class ProductDAO {
         return product;
     }
 
-    public List<Product> getProductsByCriteria(String query, String[] priceRanges) {
-        return getProductsByCriteriaWithPagination(query, priceRanges, 0, Integer.MAX_VALUE);
+    public List<Product> getProductsByCriteria(String query, String[] priceRanges, String[] typeIds) {
+        return getProductsByCriteriaWithPagination(query, priceRanges, typeIds, 0, Integer.MAX_VALUE);
     }
 
-    public List<Product> getProductsByCriteriaWithPagination(String query, String[] priceRanges, int page, int pageSize) {
+    public List<Product> getProductsByCriteriaWithPagination(String query, String[] priceRanges, String[] typeIds, int page, int pageSize) {
         List<Product> products = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM products");
         List<String> conditions = new ArrayList<>();
@@ -107,6 +107,17 @@ public class ProductDAO {
         if (query != null && !query.trim().isEmpty()) {
             conditions.add("name LIKE ?");
             parameters.add("%" + query + "%");
+        }
+
+        if (typeIds != null && typeIds.length > 0 && !Arrays.asList(typeIds).contains("all")) {
+            List<String> typeConditions = new ArrayList<>();
+            for (String typeId : typeIds) {
+                typeConditions.add("typeId = ?");
+                parameters.add(Integer.parseInt(typeId));
+            }
+            if (!typeConditions.isEmpty()) {
+                conditions.add("(" + String.join(" OR ", typeConditions) + ")");
+            }
         }
 
         if (priceRanges != null && priceRanges.length > 0 && !Arrays.asList(priceRanges).contains("all")) {
@@ -177,7 +188,7 @@ public class ProductDAO {
         return products;
     }
 
-    public int getTotalProductCount(String query, String[] priceRanges) {
+    public int getTotalProductCount(String query, String[] priceRanges, String[] typeIds) {
         int count = 0;
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM products");
         List<String> conditions = new ArrayList<>();
@@ -186,6 +197,17 @@ public class ProductDAO {
         if (query != null && !query.trim().isEmpty()) {
             conditions.add("name LIKE ?");
             parameters.add("%" + query + "%");
+        }
+
+        if (typeIds != null && typeIds.length > 0 && !Arrays.asList(typeIds).contains("all")) {
+            List<String> typeConditions = new ArrayList<>();
+            for (String typeId : typeIds) {
+                typeConditions.add("typeId = ?");
+                parameters.add(Integer.parseInt(typeId));
+            }
+            if (!typeConditions.isEmpty()) {
+                conditions.add("(" + String.join(" OR ", typeConditions) + ")");
+            }
         }
 
         if (priceRanges != null && priceRanges.length > 0 && !Arrays.asList(priceRanges).contains("all")) {
@@ -219,6 +241,8 @@ public class ProductDAO {
                     ps.setString(i + 1, (String) param);
                 } else if (param instanceof BigDecimal) {
                     ps.setBigDecimal(i + 1, (BigDecimal) param);
+                } else if (param instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) param);
                 }
             }
 
