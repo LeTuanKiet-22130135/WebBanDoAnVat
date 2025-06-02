@@ -72,7 +72,7 @@ public class UserDAO {
      * @return The User object if found, null otherwise
      */
     public User getUserByUsername(String username) {
-        String query = "SELECT id, username, hashed_password, email, status FROM users WHERE username = ?";
+        String query = "SELECT id, username, hashed_password, email, status, token FROM users WHERE username = ?";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -86,6 +86,7 @@ public class UserDAO {
                     user.setHashedPassword(rs.getString("hashed_password"));
                     user.setEmail(rs.getString("email"));
                     user.setStatus(rs.getInt("status"));
+                    user.setToken(rs.getString("token"));
                     return user;
                 }
             }
@@ -94,6 +95,95 @@ public class UserDAO {
         }
 
         return null;
+    }
+
+    /**
+     * Gets a user by email
+     * 
+     * @param email The email to search for
+     * @return The User object if found, null otherwise
+     */
+    public User getUserByEmail(String email) {
+        String query = "SELECT id, username, hashed_password, email, status, token FROM users WHERE email = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, email);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setHashedPassword(rs.getString("hashed_password"));
+                    user.setEmail(rs.getString("email"));
+                    user.setStatus(rs.getInt("status"));
+                    user.setToken(rs.getString("token"));
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets a user by token
+     * 
+     * @param token The token to search for
+     * @return The User object if found, null otherwise
+     */
+    public User getUserByToken(String token) {
+        String query = "SELECT id, username, hashed_password, email, status, token FROM users WHERE token = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, token);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setHashedPassword(rs.getString("hashed_password"));
+                    user.setEmail(rs.getString("email"));
+                    user.setStatus(rs.getInt("status"));
+                    user.setToken(rs.getString("token"));
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Updates a user's token
+     * 
+     * @param userId The ID of the user to update
+     * @param token The new token value
+     * @return true if the update was successful, false otherwise
+     */
+    public boolean updateUserToken(int userId, String token) {
+        String query = "UPDATE users SET token = ? WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, token);
+            stmt.setInt(2, userId);
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     /**
@@ -318,5 +408,86 @@ public class UserDAO {
                 }
             }
         }
+    }
+
+    /**
+     * Adds a new user with OAuth information
+     * 
+     * @param email The email from OAuth provider
+     * @param firstName The first name from OAuth provider
+     * @param lastName The last name from OAuth provider
+     * @param token The OAuth token
+     * @return The ID of the newly created user, or -1 if creation failed
+     */
+    public int addUserWithOAuth(String email, String firstName, String lastName, String token) {
+        // Generate a username from email (e.g., part before @)
+        String username = email.split("@")[0];
+
+        // Check if username already exists, append numbers if needed
+        int counter = 1;
+        String baseUsername = username;
+        while (checkUser(username)) {
+            username = baseUsername + counter;
+            counter++;
+        }
+
+        String userQuery = "INSERT INTO users (username, email, status, token) VALUES (?, ?, ?, ?)";
+        String profileQuery = "INSERT INTO userprofile (user_id, first_name, last_name, email) VALUES (?, ?, ?, ?)";
+
+        Connection conn = null;
+        try {
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false); // Begin transaction
+
+            // Insert user with token (no password for OAuth users)
+            try (PreparedStatement userStmt = conn.prepareStatement(userQuery, PreparedStatement.RETURN_GENERATED_KEYS)) {
+                userStmt.setString(1, username);
+                userStmt.setString(2, email);
+                userStmt.setInt(3, 1); // Active status
+                userStmt.setString(4, token);
+                userStmt.executeUpdate();
+
+                // Get generated user ID
+                try (ResultSet rs = userStmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        int userId = rs.getInt(1);
+
+                        // Insert profile
+                        try (PreparedStatement profileStmt = conn.prepareStatement(profileQuery)) {
+                            profileStmt.setInt(1, userId);
+                            profileStmt.setString(2, firstName);
+                            profileStmt.setString(3, lastName);
+                            profileStmt.setString(4, email);
+                            profileStmt.executeUpdate();
+                        }
+
+                        conn.commit(); // Commit transaction
+                        return userId;
+                    }
+                }
+            }
+
+            conn.commit(); // Commit transaction
+        } catch (SQLException e) {
+            e.printStackTrace();
+            if (conn != null) {
+                try {
+                    conn.rollback(); // Rollback transaction on error
+                } catch (SQLException rollbackEx) {
+                    rollbackEx.printStackTrace();
+                }
+            }
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return -1; // Return -1 if user creation failed
     }
 }

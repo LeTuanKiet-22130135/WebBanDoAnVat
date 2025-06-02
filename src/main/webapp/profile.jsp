@@ -17,7 +17,9 @@
                     <a href="orderhistory" class="list-group-item list-group-item-action">
                         <fmt:message key="footer.orderHistory" />
                     </a>
-                    <a href="changepassword" class="list-group-item list-group-item-action"><fmt:message key="footer.changePassword" /></a>
+                    <c:if test="${user.hashedPassword != null}">
+                        <a href="changepassword" class="list-group-item list-group-item-action"><fmt:message key="footer.changePassword" /></a>
+                    </c:if>
                 </div>
             </div>
         </div>

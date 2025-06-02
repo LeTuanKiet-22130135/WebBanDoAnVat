@@ -23,6 +23,13 @@
                     <button type="submit" id="loginButton" class="btn btn-primary"><fmt:message key="button.login" /></button>
                     <a href="signup" class="btn btn-secondary"><fmt:message key="button.signup" /></a>
                 </div>
+
+                <div class="mt-3 text-center">
+                    <p>OR</p>
+                    <a href="oauth/google" class="btn btn-danger">
+                        <i class="fab fa-google mr-2"></i> Login with Google
+                    </a>
+                </div>
                 <c:if test="${loginLocked}">
                     <div class="mt-2 text-danger">
                         <span id="lockoutMessage">Login temporarily disabled. Please wait <span id="countdown"></span> seconds.</span>
