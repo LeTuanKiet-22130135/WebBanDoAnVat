@@ -79,12 +79,6 @@ public class User {
         this.token = token;
     }
 
-    // Convenience method to check if user is admin (for backward compatibility)
-    public boolean isAdmin() {
-        // Assuming status value 1 represents admin
-        return status == 1;
-    }
-
     @Override
     public String toString() {
         return "User{" +
