@@ -70,13 +70,21 @@
 
             <!-- Payment Form -->
             <form action="checkout" method="post">
+                <!-- Payment Section -->
                 <div class="mb-5">
                     <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Payment</span></h5>
                     <div class="bg-light p-30">
                         <div class="form-group">
                             <div class="custom-control custom-radio">
-                                <input type="radio" class="custom-control-input" name="payment" id="directcheck" value="directcheck" required>
-                                <label class="custom-control-label" for="directcheck">Direct Check</label>
+                                <input type="radio" class="custom-control-input" name="payment" id="cod" value="cod" required>
+                                <label class="custom-control-label" for="cod">COD</label>
+                            </div>
+                            <div class="custom-control custom-radio mt-2">
+                                <input type="radio" class="custom-control-input" name="payment" id="vnpay" value="vnpay">
+                                <label class="custom-control-label" for="vnpay">
+                                    VnPay
+                                    <img src="https://sandbox.vnpayment.vn/paymentv2/images/icons/logo-en.svg" alt="VnPay" height="24" class="ml-2">
+                                </label>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-block btn-primary font-weight-bold py-3">Place Order</button>
