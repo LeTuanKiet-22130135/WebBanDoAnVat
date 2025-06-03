@@ -346,6 +346,31 @@ public class UserDAO {
     }
 
     /**
+     * Updates a user's password
+     * 
+     * @param username The username of the user
+     * @param newHashedPassword The new hashed password
+     * @return true if the update was successful, false otherwise
+     */
+    public boolean updateUserPassword(String username, String newHashedPassword) {
+        String query = "UPDATE users SET hashed_password = ? WHERE username = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, newHashedPassword);
+            stmt.setString(2, username);
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
      * Adds a new user with a profile
      * 
      * @param username The username of the new user

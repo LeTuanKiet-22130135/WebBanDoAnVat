@@ -210,17 +210,26 @@ $(document).ready(function() {
 
     // Function to update cart summary
     function updateCartSummary(cartSubtotal) {
+        // Format currency with Vietnamese Dong symbol
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'decimal',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }).format(amount) + ' ₫';
+        }
+
         // Update subtotal
-        $('.col-lg-4 .border-bottom .d-flex:first-child h6:last-child').text(cartSubtotal + ' đ');
+        $('.col-lg-4 .border-bottom .d-flex:first-child h6:last-child').text(formatCurrency(cartSubtotal));
 
         // Get shipping cost
         const shippingCostText = $('.col-lg-4 .border-bottom .d-flex:last-child h6:last-child').text();
-        const shippingCost = parseFloat(shippingCostText.replace(' đ', ''));
+        const shippingCost = parseFloat(shippingCostText.replace(/[^\d.-]/g, ''));
 
         // Calculate and update total
         const subtotal = parseFloat(cartSubtotal);
         const total = subtotal + shippingCost;
-        $('.col-lg-4 .pt-2 .d-flex h5:last-child').text(total + ' đ');
+        $('.col-lg-4 .pt-2 .d-flex h5:last-child').text(formatCurrency(total));
     }
 
     // Initial attachment of event handlers

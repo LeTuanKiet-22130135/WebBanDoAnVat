@@ -83,7 +83,7 @@
                 </div>
                 <h3 class="font-weight-semi-bold mb-4">
                     <span id="product-price">
-                        <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="₫"/>
+                        <fmt:formatNumber value="${product.price}" pattern="#,##0.## ₫"/>
                     </span>
                 </h3>
                 <p class="mb-4">${product.desc}</p>

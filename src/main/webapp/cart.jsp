@@ -24,17 +24,17 @@
 				<div class="border-bottom pb-2">
 					<div class="d-flex justify-content-between mb-3">
 						<h6><fmt:message key="cart.subtotal" /></h6>
-						<h6>${cartSubtotal} đ</h6>
+						<h6><fmt:formatNumber value="${cartSubtotal}" pattern="#,##0.## ₫"/></h6>
 					</div>
 					<div class="d-flex justify-content-between">
 						<h6 class="font-weight-medium"><fmt:message key="cart.shipping" /></h6>
-						<h6 class="font-weight-medium">${shippingCost} đ</h6>
+						<h6 class="font-weight-medium"><fmt:formatNumber value="${shippingCost}" pattern="#,##0.## ₫"/></h6>
 					</div>
 				</div>
 				<div class="pt-2">
 					<div class="d-flex justify-content-between mt-2">
 						<h5><fmt:message key="cart.total" /></h5>
-						<h5>${cartSubtotal.add(shippingCost)} đ</h5>
+						<h5><fmt:formatNumber value="${cartSubtotal.add(shippingCost)}" pattern="#,##0.## ₫"/></h5>
 					</div>
 					<a href="checkout.jsp"
 						class="btn btn-block btn-primary font-weight-bold my-3 py-3">
