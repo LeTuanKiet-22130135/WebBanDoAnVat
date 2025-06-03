@@ -57,27 +57,45 @@ public class CheckoutServlet extends HttpServlet {
         List<CartItem> cartItems = cart.getItems();
         BigDecimal totalAmount = cart.getSubtotal().add((BigDecimal) session.getAttribute("shippingCost"));
 
-        // Record the order and order items in the database
-        int orderId = orderDAO.createOrder(userId, totalAmount, cartItems);
+        // Get the selected payment method
+        String paymentMethod = req.getParameter("payment");
 
-        if (orderId > 0) {
-            // Add shipping information
-            int shippingId = orderDAO.addShipping(orderId, 0, 0); // 0 = placed, 0 = not yet paid
+        if ("vnpay".equals(paymentMethod)) {
+            // For VnPay payments, store order information in session for later use
+            // after payment is successful
+            session.setAttribute("pendingUserId", userId);
+            session.setAttribute("pendingCartItems", cartItems);
+            session.setAttribute("pendingTotalAmount", totalAmount);
 
-            // Clear the cart
-            cartDAO.clearCart(cart.getId());
+            // Generate a temporary reference for the transaction
+            String tempOrderRef = "TEMP_" + System.currentTimeMillis();
+            session.setAttribute("tempOrderRef", tempOrderRef);
 
-            // Show success popup and redirect to index page
-            resp.setContentType("text/html");
-            resp.getWriter().println("<html><body>");
-            resp.getWriter().println("<script type='text/javascript'>");
-            resp.getWriter().println("alert('Purchase successful!');");
-            resp.getWriter().println("window.location.href = 'index';");
-            resp.getWriter().println("</script>");
-            resp.getWriter().println("</body></html>");
+            // Redirect to VnPay payment servlet
+            resp.sendRedirect(req.getContextPath() + "/vnpay-payment?orderRef=" + tempOrderRef + "&amount=" + totalAmount.multiply(new BigDecimal(100)).intValue());
         } else {
-            req.setAttribute("errorMessage", "Failed to process your order. Please try again.");
-            req.getRequestDispatcher("checkout.jsp").forward(req, resp);
+            // For direct check payment, create the order immediately
+            int orderId = orderDAO.createOrder(userId, totalAmount, cartItems);
+
+            if (orderId > 0) {
+                // Add shipping information
+                int shippingId = orderDAO.addShipping(orderId, 0, 1); // 0 = placed, 1 = paid (for direct check)
+
+                // Clear cart
+                cartDAO.clearCart(cart.getId());
+
+                // Show success popup and redirect to index page
+                resp.setContentType("text/html");
+                resp.getWriter().println("<html><body>");
+                resp.getWriter().println("<script type='text/javascript'>");
+                resp.getWriter().println("alert('Purchase successful!');");
+                resp.getWriter().println("window.location.href = 'index';");
+                resp.getWriter().println("</script>");
+                resp.getWriter().println("</body></html>");
+            } else {
+                req.setAttribute("errorMessage", "Failed to process your order. Please try again.");
+                req.getRequestDispatcher("checkout.jsp").forward(req, resp);
+            }
         }
     }
 }

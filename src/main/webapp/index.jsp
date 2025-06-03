@@ -142,7 +142,7 @@
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
                 <div class="product-item bg-light mb-4">
                     <div class="product-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="${product.img}" alt="${product.name}">
+                        <img class="img-fluid w-100" src="${product.img}" alt="${product.name}" style="width: 433px; height: 433px; object-fit: contain;">
                         <div class="product-action">
                             <a class="btn btn-outline-dark btn-square add-to-cart-btn" href="javascript:void(0)" data-product-id="${product.id}"><i class="fa fa-shopping-cart"></i></a>
                             <a class="btn btn-outline-dark btn-square" href="#"><i class="far fa-heart"></i></a>

@@ -78,6 +78,13 @@
                                 <input type="radio" class="custom-control-input" name="payment" id="directcheck" value="directcheck" required>
                                 <label class="custom-control-label" for="directcheck">Direct Check</label>
                             </div>
+                            <div class="custom-control custom-radio mt-2">
+                                <input type="radio" class="custom-control-input" name="payment" id="vnpay" value="vnpay">
+                                <label class="custom-control-label" for="vnpay">
+                                    VnPay
+                                    <img src="https://sandbox.vnpayment.vn/paymentv2/images/icons/logo-en.svg" alt="VnPay" height="24" class="ml-2">
+                                </label>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-block btn-primary font-weight-bold py-3">Place Order</button>
                     </div>
