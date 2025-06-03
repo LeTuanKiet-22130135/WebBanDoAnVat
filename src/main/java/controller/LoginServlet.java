@@ -108,14 +108,16 @@ public class LoginServlet extends HttpServlet {
 		session.removeAttribute("failedLoginAttempts");
 		session.removeAttribute("loginLockUntil");
 
-		// Set username in session
-		session.setAttribute("username", username);
+		// Get the User object after successful login
+		newmodel.User authenticatedUser = userDAO.getUserByUsername(username);
 
-		// Get user ID
-		int userId = userDAO.getUserIdByUsername(username);
+		// Set user information in session
+		session.setAttribute("username", username);
+		session.setAttribute("userId", authenticatedUser.getId());
+		session.setAttribute("auth", authenticatedUser); // Store the User object
 
 		// Get user's cart and calculate total items
-		Cart cart = cartDAO.getCartByUserId(userId);
+		Cart cart = cartDAO.getCartByUserId(authenticatedUser.getId());
 		session.setAttribute("cart", cart);
 		session.setAttribute("cartSubtotal", cart.getSubtotal());
 
@@ -128,7 +130,11 @@ public class LoginServlet extends HttpServlet {
 		}
 		session.setAttribute("cartItemCount", totalItems);
 
-		// Redirect to index page
-		resp.sendRedirect("index");
+		// Redirect based on user status
+		if (authenticatedUser.getStatus() == 2 || authenticatedUser.getStatus() == 3) {
+			resp.sendRedirect(req.getContextPath() + "/admin/adminDashboard.jsp");
+		} else {
+			resp.sendRedirect(req.getContextPath() + "/index.jsp");
+		}
 	}
 }
