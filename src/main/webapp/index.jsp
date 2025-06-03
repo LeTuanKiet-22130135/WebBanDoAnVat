@@ -153,7 +153,7 @@
                     <div class="text-center py-4">
                         <a class="h6 text-decoration-none text-truncate" href="detail?id=${product.id}">${product.name}</a>
                         <div class="d-flex align-items-center justify-content-center mt-2">
-                            <h5>${product.price} đ</h5>
+                            <h5><fmt:formatNumber value="${product.price}" pattern="#,##0.## ₫"/></h5>
                         </div>
                         <div class="d-flex align-items-center justify-content-center mb-1">
                             <c:set var="rating" value="${sessionScope.productRatings[product.id] != null ? sessionScope.productRatings[product.id] : 0}" />

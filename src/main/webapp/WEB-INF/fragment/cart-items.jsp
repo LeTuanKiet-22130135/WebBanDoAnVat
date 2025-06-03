@@ -20,7 +20,7 @@
                 <td class="align-middle"><img src="${item.productImageUrl}"
                     alt="${item.productName}" style="width: 50px;">
                     ${item.productName}</td>
-                <td class="align-middle">${item.price} đ</td>
+                <td class="align-middle"><fmt:formatNumber value="${item.price}" pattern="#,##0.## ₫"/></td>
                 <td class="align-middle">
                     <!-- Quantity update form -->
                     <div class="input-group quantity mx-auto" style="width: 100px;">
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                 </td>
-                <td class="align-middle">${item.totalPrice} đ</td>
+                <td class="align-middle"><fmt:formatNumber value="${item.totalPrice}" pattern="#,##0.## ₫"/></td>
                 <td class="align-middle">
                     <!-- Remove item button -->
                     <button type="button" data-product-id="${item.productId}" 

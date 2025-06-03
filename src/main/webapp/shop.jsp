@@ -22,28 +22,28 @@
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="0-10000" id="price-1" >
-                        <label class="custom-control-label" for="price-1">0 - 10,000 đ</label>
+                        <label class="custom-control-label" for="price-1">0 - 10,000 ₫</label>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="10001-20000" id="price-2">
-                        <label class="custom-control-label" for="price-2">10,000 - 20,000 đ</label>
+                        <label class="custom-control-label" for="price-2">10,000 - 20,000 ₫</label>
 
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="20001-30000" id="price-3">
-                        <label class="custom-control-label" for="price-3">20,000 - 30,000 đ</label>
+                        <label class="custom-control-label" for="price-3">20,000 - 30,000 ₫</label>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="30001-40000" id="price-4">
-                        <label class="custom-control-label" for="price-4">30,000 - 40,000 đ</label>
+                        <label class="custom-control-label" for="price-4">30,000 - 40,000 ₫</label>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="40001-50000" id="price-5">
-                        <label class="custom-control-label" for="price-5">40,000 - 50,000 đ</label>
+                        <label class="custom-control-label" for="price-5">40,000 - 50,000 ₫</label>
                     </div>
                     <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
                         <input type="checkbox" class="custom-control-input" name="priceRange" value="over50000" id="price-morethan">
-                        <label class="custom-control-label" for="price-morethan"><fmt:message key="shop.morethan"/> 50,000 đ</label>
+                        <label class="custom-control-label" for="price-morethan"><fmt:message key="shop.morethan"/> 50,000 ₫</label>
                     </div>
                 </form>
             </div>

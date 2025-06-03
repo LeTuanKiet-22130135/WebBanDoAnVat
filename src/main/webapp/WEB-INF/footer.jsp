@@ -33,9 +33,9 @@
                         <fmt:message key="footer.myAccount" />
                     </h5>
                     <div class="d-flex flex-column justify-content-start">
-                        <a class="text-secondary mb-2" href="profile.jsp"><i class="fa fa-angle-right mr-2"></i><fmt:message key="footer.profile" /></a>
-                        <a class="text-secondary mb-2" href="orderhistory.jsp"><i class="fa fa-angle-right mr-2"></i><fmt:message key="footer.orderHistory" /></a>
-                        <a class="text-secondary mb-2" href="changepassword.jsp"><i class="fa fa-angle-right mr-2"></i><fmt:message key="footer.changePassword" /></a>
+                        <a class="text-secondary mb-2" href="profile"><i class="fa fa-angle-right mr-2"></i><fmt:message key="footer.profile" /></a>
+                        <a class="text-secondary mb-2" href="orderhistory"><i class="fa fa-angle-right mr-2"></i><fmt:message key="footer.orderHistory" /></a>
+                        <a class="text-secondary mb-2" href="changepassword"><i class="fa fa-angle-right mr-2"></i><fmt:message key="footer.changePassword" /></a>
                     </div>
                 </div>
                 <div class="col-md-4 mb-5">

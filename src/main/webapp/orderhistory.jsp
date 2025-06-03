@@ -47,7 +47,7 @@
 									<tr>
 										<td>${order.id}</td>
 										<td>${order.orderDate}</td>
-										<td>${order.total}đ</td>
+										<td><fmt:formatNumber value="${order.total}" pattern="#,##0.## ₫"/></td>
 										<td>
 											<button type="button" class="btn btn-info"
 												data-toggle="collapse" data-target="#details${order.id}">
@@ -73,8 +73,8 @@
 															<td>${item.productName}</td>
 															<td>${item.variantName}</td>
 															<td>${item.quantity}</td>
-															<td>${item.price}đ</td>
-															<td>${item.totalPrice}đ</td>
+															<td><fmt:formatNumber value="${item.price}" pattern="#,##0.## ₫"/></td>
+															<td><fmt:formatNumber value="${item.totalPrice}" pattern="#,##0.## ₫"/></td>
 														</tr>
 													</c:forEach>
 												</tbody>

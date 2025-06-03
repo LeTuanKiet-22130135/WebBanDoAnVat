@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 
 <!-- Iterate over products and generate product cards -->
 <c:forEach var="product" items="${products}">
@@ -17,8 +18,8 @@
             <div class="text-center py-4">
                 <a class="h6 text-decoration-none text-truncate" href="detail?id=${product.id}">${product.name}</a>
                 <div class="d-flex align-items-center justify-content-center mt-2">
-                    <h5>${product.price} đ</h5>
-                    <h6 class="text-muted ml-2"><del>$${product.price}</del></h6>
+                    <h5><fmt:formatNumber value="${product.price}" pattern="#,##0.## ₫"/></h5>
+                    <h6 class="text-muted ml-2"><del><fmt:formatNumber value="${product.price}" pattern="#,##0.## ₫"/></del></h6>
                 </div>
                 <div class="d-flex align-items-center justify-content-center mb-1">
                     <c:set var="rating" value="${productRatings[product.id] != null ? productRatings[product.id] : 0}" />
