@@ -10,6 +10,11 @@
                     ${error}
                 </div>
             </c:if>
+            <c:if test="${not empty successMessage}">
+                <div class="alert alert-success" role="alert">
+                    ${successMessage}
+                </div>
+            </c:if>
             <form action="login" method="post">
                 <div class="form-group">
                     <label for="username"><fmt:message key="label.username" /></label>
@@ -22,6 +27,9 @@
                 <div class="d-flex justify-content-between">
                     <button type="submit" id="loginButton" class="btn btn-primary"><fmt:message key="button.login" /></button>
                     <a href="signup" class="btn btn-secondary"><fmt:message key="button.signup" /></a>
+                </div>
+                <div class="mt-2 text-center">
+                    <a href="forgot-password" class="text-primary">Forgot Password?</a>
                 </div>
 
                 <div class="mt-3 text-center btn-group-vertical d-flex justify-content-center align-items-center">

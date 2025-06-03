@@ -90,7 +90,7 @@
 
                 <!-- Variant Selection -->
                 <div class="mb-4">
-                    <label for="variant-select"><strong>Choose Variant:</strong></label>
+                    <label for="variant-select"><strong><fmt:message key="detail.chooseVariant" /></strong></label>
                     <select id="variant-select" class="form-control">
                         <c:forEach var="variant" items="${product.variants}">
                             <option value="${variant.id}" data-price="${variant.price}">
@@ -111,14 +111,14 @@
                         </div>
                     </div>
                     <button type="button" id="add-to-cart-btn" class="btn btn-primary px-3">
-                        <i class="fa fa-shopping-cart mr-1"></i> Add To Cart
+                        <i class="fa fa-shopping-cart mr-1"></i> <fmt:message key="button.addToCart" />
                     </button>
                     <input type="hidden" id="product-id" value="${product.id}">
                     <input type="hidden" id="selected-variant-id" value="${product.variants[0].id}">
                 </div>
 
                 <div class="d-flex pt-2">
-                    <strong class="text-dark mr-2">Share on:</strong>
+                    <strong class="text-dark mr-2"><fmt:message key="label.share" />:</strong>
                     <div class="d-inline-flex">
                         <a class="text-dark px-2" href="#"><i class="fab fa-facebook-f"></i></a>
                         <a class="text-dark px-2" href="#"><i class="fab fa-twitter"></i></a>
@@ -135,23 +135,23 @@
         <div class="col">
             <div class="bg-light p-30">
                 <div class="nav nav-tabs mb-4">
-                    <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1">Description</a>
-                    <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-2">Reviews (${reviewCount})</a>
+                    <a class="nav-item nav-link text-dark active" data-toggle="tab" href="#tab-pane-1"><fmt:message key="tab.description" /></a>
+                    <a class="nav-item nav-link text-dark" data-toggle="tab" href="#tab-pane-2"><fmt:message key="detail.reviews" /> (${reviewCount})</a>
                 </div>
                 <div class="tab-content">
                     <!-- Description Tab -->
                     <div class="tab-pane fade show active" id="tab-pane-1">
-                        <h4 class="mb-3">Product Description</h4>
+                        <h4 class="mb-3"><fmt:message key="label.productDescription" /></h4>
                         <p>${product.desc}</p>
                     </div>
                     <!-- Review Tab -->
                     <div class="tab-pane fade" id="tab-pane-2">
                         <div class="row">
                             <div class="col-md-6">
-                                <h4 class="mb-4">${reviewCount} review(s) for "${product.name}"</h4>
+                                <h4 class="mb-4">${reviewCount} <fmt:message key="detail.reviewsFor" /> "${product.name}"</h4>
 
                                 <c:if test="${empty reviews}">
-                                    <p>No reviews yet. Be the first to review this product!</p>
+                                    <p><fmt:message key="detail.noReviews" /></p>
                                 </c:if>
 
                                 <c:forEach var="review" items="${reviews}">
@@ -177,7 +177,7 @@
                                 </c:forEach>
                             </div>
                             <div class="col-md-6">
-                                <h4 class="mb-4">Leave a review</h4>
+                                <h4 class="mb-4"><fmt:message key="detail.leaveReview" /></h4>
 
                                 <c:if test="${not empty reviewError}">
                                     <div class="alert alert-danger">
@@ -188,7 +188,7 @@
                                 <c:choose>
                                     <c:when test="${empty username}">
                                         <div class="alert alert-info">
-                                            Please <a href="${pageContext.request.contextPath}/login">login</a> to leave a review.
+                                            <fmt:message key="detail.pleaseLogin" /> <a href="${pageContext.request.contextPath}/login"><fmt:message key="nav.login" /></a> <fmt:message key="detail.toLeaveReview" />
                                         </div>
                                     </c:when>
                                     <c:otherwise>
@@ -196,7 +196,7 @@
                                             <input type="hidden" name="productId" value="${product.id}">
 
                                             <div class="form-group">
-                                                <label>Your Rating *</label>
+                                                <label><fmt:message key="detail.yourRating" /> *</label>
                                                 <div class="stars">
                                                     <div class="rating-group">
                                                         <c:forEach begin="1" end="5" var="i">
@@ -212,12 +212,12 @@
                                             </div>
 
                                             <div class="form-group">
-                                                <label for="comment">Your Review *</label>
+                                                <label for="comment"><fmt:message key="detail.yourReview" /> *</label>
                                                 <textarea id="comment" name="comment" cols="30" rows="5" class="form-control" required></textarea>
                                             </div>
 
                                             <div class="form-group mb-0">
-                                                <button type="submit" class="btn btn-primary px-3">Submit Review</button>
+                                                <button type="submit" class="btn btn-primary px-3"><fmt:message key="detail.submitReview" /></button>
                                             </div>
                                         </form>
                                     </c:otherwise>
@@ -237,6 +237,11 @@
 <script src="${pageContext.request.contextPath}/js/variant-selection.js" defer></script>
 <!-- Include custom cart JavaScript -->
 <script src="${pageContext.request.contextPath}/js/cart.js"></script>
+
+<!-- Hidden elements for i18n in JavaScript -->
+<div id="i18n-messages" style="display: none;">
+    <span id="msg-review-submitted"><fmt:message key="detail.reviewSubmitted" /></span>
+</div>
 
 <script>
     $(document).ready(function() {
@@ -273,8 +278,11 @@
     }
 
     function showReviewSuccess() {
+        // Get the translated message from the hidden element
+        const reviewSubmittedMsg = $('#msg-review-submitted').text();
+
         // Add success message before the review form
-        const successMessage = $('<div class="review-success mb-3">Your review has been submitted successfully!</div>');
+        const successMessage = $('<div class="review-success mb-3">' + reviewSubmittedMsg + '</div>');
         $('form[action*="/review/add"]').before(successMessage);
 
         // Remove the message after 5 seconds
