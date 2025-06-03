@@ -204,4 +204,28 @@ public class OrderDAO {
 
         return shippingId;
     }
+
+    /**
+     * Updates the payment status for an order
+     * 
+     * @param orderId The ID of the order
+     * @param paymentStatus The payment status (0 = not yet, 1 = success, -1 = failed)
+     * @return true if the update was successful, false otherwise
+     */
+    public boolean updatePaymentStatus(int orderId, int paymentStatus) {
+        String query = "UPDATE shipping SET paymentStat = ? WHERE oId = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, paymentStatus);
+            stmt.setInt(2, orderId);
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
