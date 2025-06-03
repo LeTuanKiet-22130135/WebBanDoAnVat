@@ -10,8 +10,6 @@
     <meta charset="utf-8">
     <title>ShopAnVat</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
@@ -78,8 +76,8 @@
                         </c:choose>
                     </button>
                     <div class="dropdown-menu" aria-labelledby="languageDropdown">
-                        <a class="dropdown-item ${cookie.lang.value == 'en' || empty cookie.lang ? 'active' : ''}" href="setLanguage?lang=en"><fmt:message key="label.language.english" /></a>
-                        <a class="dropdown-item ${cookie.lang.value == 'vi' ? 'active' : ''}" href="setLanguage?lang=vi"><fmt:message key="label.language.vietnamese" /></a>
+                        <a class="dropdown-item ${cookie.lang.value == 'vi' || empty cookie.lang ? 'active' : ''}" href="setLanguage?lang=vi"><fmt:message key="label.language.vietnamese" /></a>
+                        <a class="dropdown-item ${cookie.lang.value == 'en' ? 'active' : ''}" href="setLanguage?lang=en"><fmt:message key="label.language.english" /></a>
                     </div>
                 </div>
             </div>
@@ -101,13 +99,13 @@
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="index" class="nav-item nav-link active"><fmt:message key="nav.home" /></a>
-                            <a href="shop" class="nav-item nav-link"><fmt:message key="nav.shop" /></a>
-                            <a href="contact.jsp" class="nav-item nav-link"><fmt:message key="nav.contact" /></a>
+                            <a href="index.jsp" class="nav-item nav-link ${pageContext.request.servletPath == '/index.jsp' ? 'active' : ''}"><fmt:message key="nav.home" /></a>
+                            <a href="shop.jsp" class="nav-item nav-link ${pageContext.request.servletPath == '/shop.jsp' ? 'active' : ''}"><fmt:message key="nav.shop" /></a>
+                            <a href="contact.jsp" class="nav-item nav-link ${pageContext.request.servletPath == '/contact.jsp' ? 'active' : ''}"><fmt:message key="nav.contact" /></a>
                         </div>
                         <!-- Account and Cart Section -->
                         <div class="d-flex align-items-center">
-                            <a href="cart" class="btn px-0 mr-3">
+                            <a href="cart.jsp" class="btn px-0 mr-3">
                                 <i class="fas fa-shopping-cart text-primary"></i>
                                 <c:if test="${not empty sessionScope.username}">
                                     <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">${sessionScope.cartItemCount}</span>
@@ -116,7 +114,7 @@
                             <div class="nav-item dropdown">
                                 <c:choose>
                                     <c:when test="${empty sessionScope.username}">
-                                        <a href="login" class="nav-link" style="color: white;">
+                                        <a href="login.jsp" class="nav-link" style="color: white;">
                                             <i class="fa fa-user"></i> <fmt:message key="nav.login" />
                                         </a>
                                     </c:when>
@@ -125,7 +123,7 @@
                                             <i class="fa fa-user text-primary"></i> ${sessionScope.username}
                                         </a>
                                         <div class="dropdown-menu dropdown-menu-right">
-                                            <a href="profile" class="dropdown-item"><fmt:message key="nav.profile" /></a>
+                                            <a href="profile.jsp" class="dropdown-item"><fmt:message key="nav.profile" /></a>
                                             <a href="logout" class="dropdown-item"><fmt:message key="nav.logout" /></a>
                                         </div>
                                     </c:otherwise>

@@ -6,7 +6,7 @@
 
 <head>
 <meta charset="utf-8">
-<title>MultiShop - Online Shop Website Template</title>
+<title>ShopAnVat</title>
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="Free HTML Templates" name="keywords">
 <meta content="Free HTML Templates" name="description">
@@ -63,7 +63,7 @@
 				<div class="nav-item dropdown">
 					<c:choose>
 						<c:when test="${empty pageContext.request.remoteUser}">
-							<a href="login" class="nav-link" style="color: white;"> <i
+							<a href="login.jsp" class="nav-link" style="color: white;"> <i
 								class="fa fa-user"></i> Login
 							</a>
 						</c:when>
