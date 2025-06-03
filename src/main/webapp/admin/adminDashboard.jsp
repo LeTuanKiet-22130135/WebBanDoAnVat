@@ -27,7 +27,7 @@
         <div class="sidebar-wrapper">
             <div class="logo">
                 <a href="../profile.jsp" class="simple-text logo-normal">
-                    Xin chào <%= session.getAttribute("handle") %>
+                    Xin chào <%= session.getAttribute("username") %>
                 </a>
             </div>
             <ul class="nav">
