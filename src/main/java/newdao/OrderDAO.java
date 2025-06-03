@@ -228,4 +228,69 @@ public class OrderDAO {
             return false;
         }
     }
+
+    /**
+     * Gets an order by its ID
+     * 
+     * @param orderId The ID of the order to retrieve
+     * @return The Order object if found, null otherwise
+     */
+    public Order getOrderById(int orderId) {
+        String query = "SELECT * FROM orders WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, orderId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Order order = new Order();
+                    order.setId(rs.getInt("id"));
+                    order.setUserId(rs.getInt("uId"));
+                    order.setOrderDate(rs.getDate("orderDate"));
+                    order.setTotal(rs.getBigDecimal("total"));
+
+                    // Get order details for this order
+                    order.setOrderDetails(getOrderDetailsByOrderId(order.getId()));
+
+                    return order;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets shipping information for an order
+     * 
+     * @param orderId The ID of the order
+     * @return The Shipping object if found, null otherwise
+     */
+    public Shipping getShippingByOrderId(int orderId) {
+        String query = "SELECT * FROM shipping WHERE oId = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, orderId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Shipping shipping = new Shipping();
+                    shipping.setId(rs.getInt("id"));
+                    shipping.setOrderId(rs.getInt("oId"));
+                    shipping.setStatus(rs.getInt("status"));
+                    shipping.setPaymentStatus(rs.getInt("paymentStat"));
+
+                    return shipping;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

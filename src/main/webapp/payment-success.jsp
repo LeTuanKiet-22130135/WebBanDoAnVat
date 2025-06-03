@@ -28,7 +28,7 @@
                         </div>
                         <h5 class="card-title text-center">Thank you for your payment!</h5>
                         <p class="card-text text-center">Your transaction has been completed successfully.</p>
-                        
+
                         <div class="mt-4">
                             <h6>Payment Details:</h6>
                             <table class="table table-bordered">
@@ -52,9 +52,15 @@
                                     <th>Payment Date:</th>
                                     <td>${sessionScope.vnp_PayDate}</td>
                                 </tr>
+                                <c:if test="${not empty sessionScope.ghnOrderCode}">
+                                <tr>
+                                    <th>Order Code:</th>
+                                    <td>${sessionScope.ghnOrderCode}</td>
+                                </tr>
+                                </c:if>
                             </table>
                         </div>
-                        
+
                         <div class="text-center mt-4">
                             <a href="${pageContext.request.contextPath}/" class="btn btn-primary">Continue Shopping</a>
                         </div>
