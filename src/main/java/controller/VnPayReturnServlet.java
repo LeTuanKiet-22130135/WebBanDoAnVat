@@ -1,6 +1,7 @@
 package controller;
 
 import util.VnPayUtil;
+import util.GHNOrderService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,9 +16,18 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import newmodel.Order;
+import newmodel.Shipping;
+import newmodel.UserProfile;
+import newdao.UserDAO;
 
 @WebServlet(name = "VnPayReturnServlet", urlPatterns = {"/vnpay_return"})
 public class VnPayReturnServlet extends HttpServlet {
+
+    private static final Logger LOGGER = Logger.getLogger(VnPayReturnServlet.class.getName());
+    private final UserDAO userDAO = new UserDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -75,6 +85,90 @@ public class VnPayReturnServlet extends HttpServlet {
                         if (orderId > 0) {
                             // Add shipping information with payment status = 1 (paid)
                             int shippingId = orderDAO.addShipping(orderId, 0, 1); // 0 = placed, 1 = paid
+
+                            // Variable to store the GHN order code
+                            String ghnOrderCode = null;
+
+                            try {
+                                // Get recipient information from request parameters or use default values
+                                // In a real application, these would be collected during checkout
+                                String recipientName = request.getParameter("name");
+                                String recipientPhone = request.getParameter("phone");
+                                String recipientAddress = request.getParameter("address");
+
+                                // Get user profile to use first_name and last_name
+                                UserProfile userProfile = userDAO.getUserProfileByUserId(pendingUserId);
+
+                                // Use user profile name if available, otherwise use request parameter or default
+                                if (recipientName == null || recipientName.isEmpty()) {
+                                    if (userProfile != null && 
+                                        userProfile.getFirstName() != null && !userProfile.getFirstName().isEmpty() &&
+                                        userProfile.getLastName() != null && !userProfile.getLastName().isEmpty()) {
+                                        recipientName = userProfile.getFirstName() + " " + userProfile.getLastName();
+                                    } else {
+                                        recipientName = "TinTest124"; // Default name from issue description
+                                    }
+                                }
+                                if (recipientPhone == null || recipientPhone.isEmpty()) {
+                                    recipientPhone = "0941172573"; // Default phone
+                                }
+                                if (recipientAddress == null || recipientAddress.isEmpty()) {
+                                    // Try to use address_line1 from userprofile
+                                    if (userProfile != null && 
+                                        userProfile.getAddressLine1() != null && 
+                                        !userProfile.getAddressLine1().isEmpty()) {
+                                        recipientAddress = userProfile.getAddressLine1();
+                                    } else {
+                                        recipientAddress = "72 Thành Thái, Phường 14, Quận 10, Hồ Chí Minh, Vietnam"; // Default address from issue description
+                                    }
+                                }
+
+                                // Default ward code and district ID
+                                String wardCode = "1A0213"; // Example ward code
+                                int districtId = 1463; // Example district ID (Ho Chi Minh City, District 1)
+
+                                // Get order and shipping objects
+                                Order order = orderDAO.getOrderById(orderId);
+                                Shipping shipping = orderDAO.getShippingByOrderId(orderId);
+
+                                if (order != null) {
+                                    // Create GHN order
+                                    ghnOrderCode = GHNOrderService.createGHNOrder(
+                                            order, 
+                                            shipping, 
+                                            recipientName, 
+                                            recipientPhone, 
+                                            recipientAddress, 
+                                            wardCode, 
+                                            districtId);
+
+                                    if (ghnOrderCode != null) {
+                                        LOGGER.info("GHN order created successfully with code: " + ghnOrderCode);
+                                        // Store the GHN order code in session for display on the success page
+                                        session.setAttribute("ghnOrderCode", ghnOrderCode);
+                                    } else {
+                                        LOGGER.warning("Failed to create GHN order for order ID: " + orderId);
+                                    }
+                                } else {
+                                    LOGGER.warning("Could not retrieve order with ID: " + orderId);
+                                }
+                            } catch (util.GHNApiException e) {
+                                LOGGER.log(Level.SEVERE, "GHN API error: " + e.getMessage() + ", Status code: " + e.getStatusCode() + 
+                                        ", Code: " + e.getCode() + ", Code Message: " + e.getCodeMessage(), e);
+
+                                // Set error attributes
+                                request.setAttribute("errorCode", e.getStatusCode());
+                                request.setAttribute("errorMessage", "Error communicating with shipping service: " + e.getMessage());
+                                request.setAttribute("code", e.getCode());
+                                request.setAttribute("codeMessage", e.getCodeMessage());
+                                request.setAttribute("apiMessage", e.getApiMessage());
+
+                                // Forward to error page
+                                request.getRequestDispatcher("error.jsp").forward(request, response);
+                                return;
+                            } catch (Exception e) {
+                                LOGGER.log(Level.SEVERE, "Error creating GHN order", e);
+                            }
 
                             // Clear cart
                             if (cart != null) {
